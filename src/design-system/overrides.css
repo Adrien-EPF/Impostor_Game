@@ -1,0 +1,7 @@
+/*
+ * Prototype-only overrides on top of ds-bundle.css tokens (documented in the
+ * design handoff's "Design Tokens" table).
+ */
+:root {
+  --turquoise: #4acdcf;
+}

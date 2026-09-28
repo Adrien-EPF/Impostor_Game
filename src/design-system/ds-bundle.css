@@ -1,0 +1,311 @@
+/*
+ * Vendored from design_handoff_imposteur/_ds/.../_ds_bundle.css (imposteur-design-system@2.0.0).
+ * Do not hand-edit component rules here; the Google Fonts @import was replaced
+ * with self-hosted @font-face rules in ./fonts.css so the app works offline.
+ */
+
+/* colors_and_type.css */
+:root {
+  --surface: #ffffff;
+  --surface-tint: #e6f8f8;
+  --ink: #1f2a37;
+  --ink-muted: #5f6b78;
+  --turquoise: #2ec4c6;
+  --turquoise-deep: #067a82;
+  --lemon: #fff3b0;
+  --lemon-strong: #ffd84a;
+  --civil: var(--turquoise);
+  --imposteur: #ff6b81;
+  --mr-white: #8f7cff;
+  --danger: #c9304d;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-10: 40px;
+  --radius-sm: 12px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-sticker: 0 4px 0 #1f2a37;
+  --shadow-card: 0 12px 32px rgba(31, 42, 55, 0.14);
+  --font-display:
+    "Baloo 2",
+    "Nunito",
+    ui-rounded,
+    system-ui,
+    sans-serif;
+  --font-sans:
+    "Nunito",
+    ui-rounded,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+.secret-word {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 68px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 44px;
+  font-weight: 800;
+}
+.heading {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+}
+.label {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 20px;
+  font-weight: 800;
+}
+.caption {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+/* src/styles.css */
+.btn {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 20px;
+  font-weight: 800;
+  min-height: 56px;
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-sticker);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+.btn:focus-visible {
+  outline: 3px solid var(--turquoise-deep);
+  outline-offset: 3px;
+}
+.btn--primary {
+  background: var(--turquoise);
+  color: var(--ink);
+}
+.btn--secondary {
+  background: var(--surface);
+  color: var(--ink);
+}
+.btn--danger {
+  background: var(--danger);
+  color: var(--surface);
+}
+.btn:disabled {
+  background: var(--surface-tint);
+  color: var(--ink-muted);
+  border-color: var(--ink-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.secret-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+.secret-card__hint {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500;
+  text-align: center;
+}
+.secret-card__scene {
+  width: 300px;
+  height: 220px;
+  perspective: 900px;
+}
+.secret-card__card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 250ms ease-in;
+}
+.secret-card__card--open {
+  transform: rotateY(180deg);
+  transition: transform 450ms cubic-bezier(.34, 1.56, .64, 1);
+}
+.secret-card__face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-card);
+  border: 2px solid var(--ink);
+}
+.secret-card__face--back {
+  background: var(--turquoise);
+  background-image:
+    radial-gradient(
+      circle at center,
+      var(--surface-tint) 0 6px,
+      transparent 7px);
+  background-size: 40px 40px;
+}
+.secret-card__face--back span {
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 24px;
+}
+.secret-card__face--front {
+  background: var(--lemon);
+  transform: rotateY(180deg);
+}
+.secret-card__face--front small {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.secret-card__word {
+  max-width: calc(100% - 2 * var(--space-4));
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 60px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .secret-card__card,
+  .secret-card__card--open {
+    transition: none;
+  }
+}
+.role-tile {
+  box-sizing: border-box;
+  width: 180px;
+  padding: var(--space-6) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-sticker);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink);
+}
+.role-tile__disc {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+}
+.role-tile__disc svg {
+  width: 52px;
+  height: 52px;
+}
+.role-tile--civil .role-tile__disc,
+.role-tile--civil .role-tile__badge {
+  background: var(--civil);
+}
+.role-tile--imposteur .role-tile__disc,
+.role-tile--imposteur .role-tile__badge {
+  background: var(--imposteur);
+}
+.role-tile--mr-white .role-tile__disc,
+.role-tile--mr-white .role-tile__badge {
+  background: var(--mr-white);
+}
+.role-tile__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+}
+.role-tile__badge {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 800;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--ink);
+}
+.role-tile--animated .role-tile__disc {
+  animation: role-tile-pop 500ms cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.role-tile--animated .role-tile__badge {
+  animation: role-tile-up 200ms ease-out 500ms both;
+}
+@keyframes role-tile-pop {
+  0% {
+    transform: scale(.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes role-tile-up {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .role-tile--animated .role-tile__disc,
+  .role-tile--animated .role-tile__badge {
+    animation: role-tile-fade 150ms both;
+  }
+  @keyframes role-tile-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
