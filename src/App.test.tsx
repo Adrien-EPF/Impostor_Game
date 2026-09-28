@@ -27,7 +27,7 @@ describe("App", () => {
   it("navigates to E2 from E1's 'Nouvelle partie' button", async () => {
     render(<App />);
     await userEvent.click(screen.getByRole("button", { name: "Nouvelle partie" }));
-    expect(screen.getByText(/Joueurs/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Qui joue ?" })).toBeInTheDocument();
     expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 });

@@ -1,0 +1,164 @@
+.e2 {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.e2__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.e2__title {
+  margin: 0;
+}
+
+.e2__counter {
+  background: var(--lemon);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 4px 14px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.e2__add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.e2__add-row {
+  display: flex;
+  gap: 12px;
+}
+
+.e2__add-input {
+  flex: 1;
+  box-sizing: border-box;
+  height: 56px;
+  padding: 0 22px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.e2__add-error {
+  color: var(--danger);
+  padding-left: 22px;
+}
+
+.e2__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.e2__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 16px;
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+}
+
+.e2__row--invalid {
+  border-color: var(--danger);
+}
+
+.e2__row-num {
+  width: 28px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--turquoise-deep);
+}
+
+.e2__row-input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.e2__row-tag {
+  color: var(--danger);
+}
+
+.e2__row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.e2__icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.e2__icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.e2__empty {
+  border: 2px dashed var(--ink-muted);
+  border-radius: var(--radius-lg);
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+}
+
+.e2__empty p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.e2__continue {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.e2__continue .btn {
+  width: 100%;
+}
+
+.e2__continue-msg {
+  color: var(--ink-muted);
+  text-align: center;
+}
