@@ -1,4 +1,5 @@
-export type ScreenId = "E1" | "E2" | "E3" | "E4" | "E5" | "E6" | "E7" | "E8" | "regles";
+export type { ScreenId } from "../../state/screenId";
+import type { ScreenId } from "../../state/screenId";
 
 export const SCREEN_ORDER: ScreenId[] = ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "regles"];
 

@@ -5,6 +5,7 @@ import { loadLibrary } from "../../library";
 import { composition, effectiveTours, launchBlockedReason, toggleCategory } from "../../settings";
 import type { Settings } from "../../settings";
 import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
+import { saveRememberedSettings } from "../../state/rememberedSettings";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E3.css";
 
@@ -69,6 +70,7 @@ export function E3({ onNavigate }: ScreenProps) {
     const game = buildNewGame(players, settings, library.groups);
     if (!game) return;
     saveGameState({ players, settings, game, cardPlayer: null, elimTarget: null });
+    saveRememberedSettings({ players, settings });
     onNavigate("E4");
   }
 

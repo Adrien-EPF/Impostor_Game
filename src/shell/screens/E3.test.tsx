@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { saveGameState } from "../../state/gameState";
+import { loadRememberedSettings } from "../../state/rememberedSettings";
 import { DEFAULT_SETTINGS } from "../../settings";
 import { E3 } from "./E3";
 
@@ -88,5 +89,14 @@ describe("E3", () => {
     render(<E3 onNavigate={onNavigate} />);
     await userEvent.click(screen.getByRole("button", { name: "Lancer la partie" }));
     expect(onNavigate).toHaveBeenCalledWith("E4");
+  });
+
+  it("remembers players/settings under the réglages key on 'Lancer la partie' (F16)", async () => {
+    const players = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    seed(players);
+    render(<E3 onNavigate={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Plus d'imposteurs" }));
+    await userEvent.click(screen.getByRole("button", { name: "Lancer la partie" }));
+    expect(loadRememberedSettings()).toEqual({ players, settings: { ...DEFAULT_SETTINGS, imposteurs: 2 } });
   });
 });

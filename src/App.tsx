@@ -15,12 +15,18 @@ import { loadGameState, saveGameState } from "./state/gameState";
  * lives here too, next to the TopBar that triggers it.
  */
 export function App() {
-  const [current, setCurrent] = useState<ScreenId>("E1");
+  const [current, setCurrent] = useState<ScreenId>(() => loadGameState().screen ?? "E1");
   const [abandonAsk, setAbandonAsk] = useState(false);
+
+  /** Persists `screen` onto the état de partie so a reload resumes here (#9), then switches. */
+  function navigate(id: ScreenId) {
+    saveGameState({ ...loadGameState(), screen: id });
+    setCurrent(id);
+  }
 
   function handleAbandon() {
     const state = loadGameState();
-    saveGameState({ ...state, game: null, cardPlayer: null, elimTarget: null });
+    saveGameState({ ...state, game: null, cardPlayer: null, elimTarget: null, screen: "E2" });
     setAbandonAsk(false);
     setCurrent("E2");
   }
@@ -35,7 +41,7 @@ export function App() {
               key={id}
               type="button"
               aria-pressed={current === id}
-              onClick={() => setCurrent(id)}
+              onClick={() => navigate(id)}
             >
               {id}
             </button>
@@ -43,7 +49,7 @@ export function App() {
         </nav>
       )}
       <main style={{ flex: 1 }}>
-        <ScreenSwitcher current={current} onNavigate={setCurrent} />
+        <ScreenSwitcher current={current} onNavigate={navigate} />
       </main>
       {abandonAsk && (
         <div className="app__modal-backdrop">

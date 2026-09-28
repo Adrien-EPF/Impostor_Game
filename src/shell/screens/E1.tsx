@@ -3,6 +3,9 @@ import type { ChangeEvent } from "react";
 import { Button } from "../../design-system";
 import { loadLibrary, parseCSV, saveLibrary } from "../../library";
 import type { Library } from "../../library";
+import { DEFAULT_SETTINGS } from "../../settings";
+import { loadGameState, saveGameState } from "../../state/gameState";
+import { loadRememberedSettings } from "../../state/rememberedSettings";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E1.css";
 
@@ -39,6 +42,20 @@ export function E1({ onNavigate }: ScreenProps) {
         setLibrary(imported);
       }
     });
+  }
+
+  /** F16: starts fresh from the last-used players/settings (or empty/default when none exist), not from whatever the état de partie last held. */
+  function handleNewGame() {
+    const remembered = loadRememberedSettings();
+    saveGameState({
+      ...loadGameState(),
+      players: remembered?.players ?? [],
+      settings: remembered?.settings ?? DEFAULT_SETTINGS,
+      game: null,
+      cardPlayer: null,
+      elimTarget: null,
+    });
+    onNavigate("E2");
   }
 
   const reportLine = report
@@ -81,7 +98,7 @@ export function E1({ onNavigate }: ScreenProps) {
             </div>
           )}
         </div>
-        <Button variant="primary" onClick={() => onNavigate("E2")}>
+        <Button variant="primary" onClick={handleNewGame}>
           Nouvelle partie
         </Button>
         <div className="e1__actions-row">

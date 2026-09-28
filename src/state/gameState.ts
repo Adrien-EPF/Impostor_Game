@@ -4,6 +4,7 @@ import type { Cause, Role, TurnOutcome, Winner } from "../rules";
 import { DEFAULT_SETTINGS, activeGroups } from "../settings";
 import type { Settings } from "../settings";
 import { createPersistedState, GAME_STATE_KEY } from "./persistedState";
+import type { ScreenId } from "./screenId";
 
 /** The draw and its live progress through E4-E8. */
 export interface Game {
@@ -35,6 +36,8 @@ export interface GameState {
   cardPlayer: string | null;
   /** Player targeted for elimination on E7, or `null` between votes. */
   elimTarget: string | null;
+  /** Screen last navigated to, so a reload resumes there instead of resetting to E1. Absent (e.g. first-ever visit) means E1. */
+  screen?: ScreenId;
 }
 
 const EMPTY_GAME_STATE: GameState = {

@@ -2,6 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LIBRARY_KEY, loadLibrary } from "../../library";
+import { DEFAULT_SETTINGS } from "../../settings";
+import { loadGameState, saveGameState } from "../../state/gameState";
+import { saveRememberedSettings } from "../../state/rememberedSettings";
 import { E1 } from "./E1";
 
 function csvFile(name: string, content: string) {
@@ -35,6 +38,31 @@ describe("E1", () => {
     expect(onNavigate).toHaveBeenCalledWith("regles");
   });
 
+  it("'Nouvelle partie' starts empty/default when no game was ever launched (F16)", async () => {
+    render(<E1 onNavigate={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Nouvelle partie" }));
+    const state = loadGameState();
+    expect(state.players).toEqual([]);
+    expect(state.settings).toEqual(DEFAULT_SETTINGS);
+    expect(state.game).toBeNull();
+  });
+
+  it("'Nouvelle partie' prefills players/settings from the last-used réglages (F16)", async () => {
+    saveRememberedSettings({ players: ["Léa", "Hugo"], settings: { ...DEFAULT_SETTINGS, imposteurs: 2 } });
+    saveGameState({
+      players: ["Stale"],
+      settings: DEFAULT_SETTINGS,
+      cardPlayer: null,
+      elimTarget: null,
+      game: null,
+    });
+    render(<E1 onNavigate={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Nouvelle partie" }));
+    const state = loadGameState();
+    expect(state.players).toEqual(["Léa", "Hugo"]);
+    expect(state.settings).toEqual({ ...DEFAULT_SETTINGS, imposteurs: 2 });
+  });
+
   it("imports a valid CSV, reports the ignored row by its file line number, and persists the new library", async () => {
     const { container } = render(<E1 onNavigate={vi.fn()} />);
     const csv = [
@@ -57,6 +85,19 @@ describe("E1", () => {
         { cat: "Sports", words: ["Tennis", "Badminton", "Squash", "Ping-pong", "Padel"] },
       ],
     });
+  });
+
+  it("survives a reload while mid-CSV-import: the imported library round-trips through its own persisted key (#9)", async () => {
+    const { container, unmount } = render(<E1 onNavigate={vi.fn()} />);
+    const csv = ["categorie;mot1;mot2;mot3;mot4", "Boissons;Coca;Fanta;Orangina;Iced Tea"].join("\n");
+    await userEvent.upload(getFileInput(container), csvFile("mots.csv", csv));
+    expect(await screen.findByText("1 groupes importés, 0 ligne ignorée")).toBeInTheDocument();
+
+    unmount();
+    render(<E1 onNavigate={vi.fn()} />);
+
+    expect(screen.getByText("Importée depuis mots.csv")).toBeInTheDocument();
+    expect(screen.getByText("1")).toBeInTheDocument();
   });
 
   it("keeps the previous library and shows the empty-import message when zero groups are valid", async () => {

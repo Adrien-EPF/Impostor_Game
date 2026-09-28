@@ -4,6 +4,7 @@ import { matchesWord, nextChanceFinale } from "../../rules";
 import type { Cause } from "../../rules";
 import { loadLibrary } from "../../library";
 import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
+import { loadRememberedSettings } from "../../state/rememberedSettings";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E8.css";
 
@@ -55,8 +56,17 @@ export function E8({ onNavigate }: ScreenProps) {
     onNavigate("E4");
   }
 
+  /** F16: prefills from the same réglages source as E1's "Nouvelle partie", not straight from this finished game's copy. */
   function handleNewGame() {
-    saveGameState({ ...state, game: null, cardPlayer: null, elimTarget: null });
+    const remembered = loadRememberedSettings();
+    saveGameState({
+      ...state,
+      players: remembered?.players ?? state.players,
+      settings: remembered?.settings ?? state.settings,
+      game: null,
+      cardPlayer: null,
+      elimTarget: null,
+    });
     onNavigate("E2");
   }
 
