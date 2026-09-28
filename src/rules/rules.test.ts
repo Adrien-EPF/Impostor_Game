@@ -147,7 +147,15 @@ describe("resolveTurn", () => {
   it("advances the turn and draws a new starter (RG03) when nobody won", () => {
     const players = ["A", "B", "C", "D"];
     const roles: Record<string, Role> = { A: "civil", B: "civil", C: "civil", D: "imposteur" };
-    const outcome = resolveTurn(players, roles, [], 1, false, 99, false);
+    const outcome = resolveTurn({
+      players,
+      roles,
+      eliminated: [],
+      turn: 1,
+      toursMode: false,
+      toursTarget: 99,
+      mrWhiteGuessedCorrectly: false,
+    });
     expect(outcome.winner).toBeNull();
     expect(outcome.turn).toBe(2);
     expect(outcome.starter).not.toBeNull();
@@ -157,7 +165,15 @@ describe("resolveTurn", () => {
   it("stops advancing the turn once a side has won", () => {
     const players = ["A", "B", "C"];
     const roles: Record<string, Role> = { A: "civil", B: "civil", C: "civil" };
-    const outcome = resolveTurn(players, roles, [], 3, false, 99, false);
+    const outcome = resolveTurn({
+      players,
+      roles,
+      eliminated: [],
+      turn: 3,
+      toursMode: false,
+      toursTarget: 99,
+      mrWhiteGuessedCorrectly: false,
+    });
     expect(outcome).toEqual({ winner: "civils", cause: "elimination", turn: 3, starter: null });
   });
 });

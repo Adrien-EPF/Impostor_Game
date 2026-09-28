@@ -109,16 +109,19 @@ export interface TurnOutcome {
   starter: string | null;
 }
 
+export interface ResolveTurnInput {
+  players: string[];
+  roles: Record<string, Role>;
+  eliminated: string[];
+  turn: number;
+  toursMode: boolean;
+  toursTarget: number;
+  mrWhiteGuessedCorrectly: boolean;
+}
+
 /** Resolves the end of a turn: either the game just ended (RG05), or the next turn's starter is drawn (RG03). */
-export function resolveTurn(
-  players: string[],
-  roles: Record<string, Role>,
-  eliminated: string[],
-  turn: number,
-  toursMode: boolean,
-  toursTarget: number,
-  mrWhiteGuessedCorrectly: boolean,
-): TurnOutcome {
+export function resolveTurn(input: ResolveTurnInput): TurnOutcome {
+  const { players, roles, eliminated, turn, toursMode, toursTarget, mrWhiteGuessedCorrectly } = input;
   const alivePlayers = players.filter((p) => !eliminated.includes(p));
   const result = checkVictory({ alivePlayers, roles, turn, toursMode, toursTarget, mrWhiteGuessedCorrectly });
   if (result) return { winner: result.winner, cause: result.cause, turn, starter: null };

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Button, RoleReveal } from "../../design-system";
-import { activeGroups } from "../../settings";
-import { assignRoles, drawGroup, matchesWord, nextChanceFinale, pickStarter } from "../../rules";
+import { matchesWord, nextChanceFinale } from "../../rules";
 import type { Cause } from "../../rules";
 import { loadLibrary } from "../../library";
-import { loadGameState, saveGameState } from "../../state/gameState";
+import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E8.css";
 
@@ -24,19 +23,19 @@ export function E8({ onNavigate }: ScreenProps) {
   // separately from `state.game.mrWhiteGuesses` so recording an answer
   // doesn't itself advance the displayed player out from under the result
   // being shown — only "Mr. White suivant"/"Voir le résultat" does that.
-  const [current, setCurrent] = useState<string | null>(() => {
-    const initial = loadGameState();
-    return initial.game
-      ? nextChanceFinale(initial.players, initial.game.roles, initial.game.eliminated, initial.game.mrWhiteGuesses)
-      : null;
-  });
-  const { players, settings, game } = state;
-  if (!game || !game.winner || !game.cause) return null;
+  const [current, setCurrent] = useState<string | null>(() =>
+    state.game ? nextChanceFinale(state.players, state.game.roles, state.game.eliminated, state.game.mrWhiteGuesses) : null,
+  );
+  if (!state.game || !state.game.winner || !state.game.cause) return null;
+  // Aliased so closures below keep the non-null narrowing (TS doesn't carry
+  // it through destructured `state.game` into nested functions).
+  const g = state.game;
+  const { players, settings } = state;
 
   function submitFinal() {
-    if (!guess.trim() || !current || !game) return;
-    const correct = matchesWord(guess, game.civilWord);
-    const nextGame = { ...game, mrWhiteGuesses: { ...game.mrWhiteGuesses, [current]: correct } };
+    if (!guess.trim() || !current) return;
+    const correct = matchesWord(guess, g.civilWord);
+    const nextGame = { ...g, mrWhiteGuesses: { ...g.mrWhiteGuesses, [current]: correct } };
     const next = { ...state, game: nextGame };
     setState(next);
     saveGameState(next);
@@ -44,37 +43,15 @@ export function E8({ onNavigate }: ScreenProps) {
   }
 
   function nextFinale() {
-    setCurrent(nextChanceFinale(players, game!.roles, game!.eliminated, game!.mrWhiteGuesses));
+    setCurrent(nextChanceFinale(players, g.roles, g.eliminated, g.mrWhiteGuesses));
     setAnswered(null);
     setGuess("");
   }
 
   function handleReplay() {
-    const library = loadLibrary();
-    const groups = activeGroups(library.groups, settings.excludedCategories);
-    if (groups.length === 0) return;
-    const draw = drawGroup(groups);
-    const roles = assignRoles(players, settings.imposteurs, settings.mrWhite);
-    const starter = pickStarter(players, roles);
-    saveGameState({
-      players,
-      settings,
-      cardPlayer: null,
-      elimTarget: null,
-      game: {
-        cat: draw.cat,
-        civilWord: draw.civilWord,
-        imposteurWord: draw.imposteurWord,
-        roles,
-        starter,
-        seen: {},
-        turn: 1,
-        eliminated: [],
-        winner: null,
-        cause: null,
-        mrWhiteGuesses: {},
-      },
-    });
+    const game = buildNewGame(players, settings, loadLibrary().groups);
+    if (!game) return;
+    saveGameState({ players, settings, cardPlayer: null, elimTarget: null, game });
     onNavigate("E4");
   }
 
@@ -84,7 +61,7 @@ export function E8({ onNavigate }: ScreenProps) {
   }
 
   if (current) {
-    const hasMore = nextChanceFinale(players, game.roles, game.eliminated, game.mrWhiteGuesses) !== null;
+    const hasMore = nextChanceFinale(players, g.roles, g.eliminated, g.mrWhiteGuesses) !== null;
     return (
       <section className="e8">
         <div className="e8__finale">
@@ -126,38 +103,38 @@ export function E8({ onNavigate }: ScreenProps) {
     );
   }
 
-  const hasImpWord = Object.values(game.roles).includes("imposteur");
+  const hasImpWord = Object.values(g.roles).includes("imposteur");
   const board = players.map((name) => {
-    const role = game.roles[name];
-    const idx = game.eliminated.indexOf(name);
+    const role = g.roles[name];
+    const idx = g.eliminated.indexOf(name);
     let status = idx >= 0 ? `Éliminé·e (${idx + 1}ᵉ)` : "En vie";
-    if (role === "mr-white" && game.mrWhiteGuesses[name] === true) status += " · a trouvé le mot";
-    else if (role === "mr-white" && game.mrWhiteGuesses[name] === false) status += " · n'a pas trouvé";
-    const word = role === "civil" ? game.civilWord : role === "imposteur" ? game.imposteurWord : "Aucun mot";
+    if (role === "mr-white" && g.mrWhiteGuesses[name] === true) status += " · a trouvé le mot";
+    else if (role === "mr-white" && g.mrWhiteGuesses[name] === false) status += " · n'a pas trouvé";
+    const word = role === "civil" ? g.civilWord : role === "imposteur" ? g.imposteurWord : "Aucun mot";
     return { name, role, word, status };
   });
 
   return (
     <section className="e8">
-      <div className={`e8__banner e8__banner--${game.winner}`}>
-        <span className="label e8__banner-kicker">{CAUSE_TEXT[game.cause](game.turn)}</span>
-        <h1 className="e8__banner-title">{game.winner === "civils" ? "Les civils gagnent" : "Les infiltrés gagnent"}</h1>
+      <div className={`e8__banner e8__banner--${g.winner}`}>
+        <span className="label e8__banner-kicker">{CAUSE_TEXT[g.cause!](g.turn)}</span>
+        <h1 className="e8__banner-title">{g.winner === "civils" ? "Les civils gagnent" : "Les infiltrés gagnent"}</h1>
       </div>
       <div className="e8__stats">
         <div className="e8__stat">
           <span className="caption">Mot des civils</span>
-          <span className="e8__stat-value">{game.civilWord}</span>
+          <span className="e8__stat-value">{g.civilWord}</span>
         </div>
         {hasImpWord && (
           <div className="e8__stat">
             <span className="caption">Mot des imposteurs</span>
-            <span className="e8__stat-value">{game.imposteurWord}</span>
+            <span className="e8__stat-value">{g.imposteurWord}</span>
           </div>
         )}
         <div className="e8__stat">
           <span className="caption">Catégorie · tours joués</span>
           <span className="e8__stat-value e8__stat-value--sm">
-            {game.cat} · {game.turn} tour{game.turn > 1 ? "s" : ""}
+            {g.cat} · {g.turn} tour{g.turn > 1 ? "s" : ""}
           </span>
         </div>
       </div>

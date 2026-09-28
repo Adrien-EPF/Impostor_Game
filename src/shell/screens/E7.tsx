@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, ROLE_LABEL, RoleReveal } from "../../design-system";
 import { matchesWord, resolveTurn } from "../../rules";
 import { effectiveTours } from "../../settings";
-import { loadGameState, saveGameState } from "../../state/gameState";
+import { applyTurnOutcome, loadGameState, saveGameState } from "../../state/gameState";
 import type { Game } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E7.css";
@@ -49,24 +49,30 @@ export function E7({ onNavigate }: ScreenProps) {
       persist(guessedGame);
       return;
     }
-    const outcome = resolveTurn(players, guessedGame.roles, guessedGame.eliminated, guessedGame.turn, toursMode, toursTarget, true);
-    persist(
-      { ...guessedGame, turn: outcome.turn, starter: outcome.starter, winner: outcome.winner, cause: outcome.cause },
-      { elimTarget: null },
-    );
+    const outcome = resolveTurn({
+      players,
+      roles: guessedGame.roles,
+      eliminated: guessedGame.eliminated,
+      turn: guessedGame.turn,
+      toursMode,
+      toursTarget,
+      mrWhiteGuessedCorrectly: true,
+    });
+    persist(applyTurnOutcome(guessedGame, outcome), { elimTarget: null });
     onNavigate("E8");
   }
 
   function handleContinue() {
-    const outcome = resolveTurn(players, g.roles, g.eliminated, g.turn, toursMode, toursTarget, false);
-    const nextGame = {
-      ...g,
-      turn: outcome.turn,
-      starter: outcome.starter,
-      winner: outcome.winner,
-      cause: outcome.cause,
-    };
-    persist(nextGame, { elimTarget: null });
+    const outcome = resolveTurn({
+      players,
+      roles: g.roles,
+      eliminated: g.eliminated,
+      turn: g.turn,
+      toursMode,
+      toursTarget,
+      mrWhiteGuessedCorrectly: false,
+    });
+    persist(applyTurnOutcome(g, outcome), { elimTarget: null });
     onNavigate(outcome.winner ? "E8" : "E6");
   }
 

@@ -5,7 +5,6 @@ import { SCREEN_ORDER } from "./shell/screens/types";
 import type { ScreenId } from "./shell/screens/types";
 import { TopBar } from "./shell/TopBar";
 import { loadGameState, saveGameState } from "./state/gameState";
-import "./App.css";
 
 /**
  * App shell: a top bar (every screen except E1, per the handoff's "Layout

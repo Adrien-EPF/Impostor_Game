@@ -2,16 +2,9 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { Button } from "../../design-system";
 import { loadLibrary } from "../../library";
-import { assignRoles, drawGroup, pickStarter } from "../../rules";
-import {
-  activeGroups,
-  composition,
-  effectiveTours,
-  launchBlockedReason,
-  toggleCategory,
-} from "../../settings";
+import { composition, effectiveTours, launchBlockedReason, toggleCategory } from "../../settings";
 import type { Settings } from "../../settings";
-import { loadGameState, saveGameState } from "../../state/gameState";
+import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E3.css";
 
@@ -73,29 +66,9 @@ export function E3({ onNavigate }: ScreenProps) {
 
   function handleLaunch() {
     if (blocked) return;
-    const groups = activeGroups(library.groups, settings.excludedCategories);
-    const draw = drawGroup(groups);
-    const roles = assignRoles(players, settings.imposteurs, settings.mrWhite);
-    const starter = pickStarter(players, roles);
-    saveGameState({
-      players,
-      settings,
-      game: {
-        cat: draw.cat,
-        civilWord: draw.civilWord,
-        imposteurWord: draw.imposteurWord,
-        roles,
-        starter,
-        seen: {},
-        turn: 1,
-        eliminated: [],
-        winner: null,
-        cause: null,
-        mrWhiteGuesses: {},
-      },
-      cardPlayer: null,
-      elimTarget: null,
-    });
+    const game = buildNewGame(players, settings, library.groups);
+    if (!game) return;
+    saveGameState({ players, settings, game, cardPlayer: null, elimTarget: null });
     onNavigate("E4");
   }
 

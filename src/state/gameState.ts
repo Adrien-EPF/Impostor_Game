@@ -1,5 +1,7 @@
-import type { Cause, Role, Winner } from "../rules";
-import { DEFAULT_SETTINGS } from "../settings";
+import type { WordGroup } from "../library";
+import { assignRoles, drawGroup, pickStarter } from "../rules";
+import type { Cause, Role, TurnOutcome, Winner } from "../rules";
+import { DEFAULT_SETTINGS, activeGroups } from "../settings";
 import type { Settings } from "../settings";
 import { createPersistedState, GAME_STATE_KEY } from "./persistedState";
 
@@ -51,4 +53,35 @@ export function loadGameState(): GameState {
 
 export function saveGameState(state: GameState): void {
   gameState.set(state);
+}
+
+/**
+ * RG02/RG03/RG08: draws a fresh game for `players`/`settings` — a new word
+ * group and starter, turn reset to 1, nothing eliminated or guessed yet.
+ * Shared by E3's "Lancer la partie" and E8's "Rejouer" (same players and
+ * settings, new draw). Returns `null` when every category is excluded.
+ */
+export function buildNewGame(players: string[], settings: Settings, libraryGroups: WordGroup[]): Game | null {
+  const groups = activeGroups(libraryGroups, settings.excludedCategories);
+  if (groups.length === 0) return null;
+  const draw = drawGroup(groups);
+  const roles = assignRoles(players, settings.imposteurs, settings.mrWhite);
+  return {
+    cat: draw.cat,
+    civilWord: draw.civilWord,
+    imposteurWord: draw.imposteurWord,
+    roles,
+    starter: pickStarter(players, roles),
+    seen: {},
+    turn: 1,
+    eliminated: [],
+    winner: null,
+    cause: null,
+    mrWhiteGuesses: {},
+  };
+}
+
+/** Merges a `resolveTurn` outcome (RG05/RG03) onto a `Game`. */
+export function applyTurnOutcome(game: Game, outcome: TurnOutcome): Game {
+  return { ...game, turn: outcome.turn, starter: outcome.starter, winner: outcome.winner, cause: outcome.cause };
 }

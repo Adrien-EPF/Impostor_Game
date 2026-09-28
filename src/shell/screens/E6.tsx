@@ -2,17 +2,20 @@ import { useState } from "react";
 import { Button, RoleReveal } from "../../design-system";
 import { resolveTurn } from "../../rules";
 import { effectiveTours } from "../../settings";
-import { loadGameState, saveGameState } from "../../state/gameState";
+import { applyTurnOutcome, loadGameState, saveGameState } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E6.css";
 
 /** E6 ("Partie"): turn/starter banner, living players (tap to eliminate), éliminés, and "Personne n'est éliminé". */
 export function E6({ onNavigate }: ScreenProps) {
   const [state, setState] = useState(() => loadGameState());
-  const { players, settings, game } = state;
-  if (!game) return null;
+  if (!state.game) return null;
+  // Aliased so closures below keep the non-null narrowing (TS doesn't carry
+  // it through destructured `state.game` into nested functions).
+  const g = state.game;
+  const { players, settings } = state;
 
-  const alive = players.filter((p) => !game.eliminated.includes(p));
+  const alive = players.filter((p) => !g.eliminated.includes(p));
   const toursMode = settings.mode === "tours";
   const toursTarget = effectiveTours(settings, players.length);
 
@@ -24,15 +27,16 @@ export function E6({ onNavigate }: ScreenProps) {
   }
 
   function handleNobody() {
-    const outcome = resolveTurn(players, game!.roles, game!.eliminated, game!.turn, toursMode, toursTarget, false);
-    const nextGame = {
-      ...game!,
-      turn: outcome.turn,
-      starter: outcome.starter,
-      winner: outcome.winner,
-      cause: outcome.cause,
-    };
-    const next = { ...state, game: nextGame };
+    const outcome = resolveTurn({
+      players,
+      roles: g.roles,
+      eliminated: g.eliminated,
+      turn: g.turn,
+      toursMode,
+      toursTarget,
+      mrWhiteGuessedCorrectly: false,
+    });
+    const next = { ...state, game: applyTurnOutcome(g, outcome) };
     setState(next);
     saveGameState(next);
     onNavigate(outcome.winner ? "E8" : "E6");
@@ -43,11 +47,11 @@ export function E6({ onNavigate }: ScreenProps) {
       <div className="e6__banner">
         <div className="e6__tile">
           <span className="label e6__tile-kicker">{toursMode ? `Tour · objectif ${toursTarget}` : "Tour"}</span>
-          <span className="e6__tile-value">{toursMode ? `${game.turn} / ${toursTarget}` : `n° ${game.turn}`}</span>
+          <span className="e6__tile-value">{toursMode ? `${g.turn} / ${toursTarget}` : `n° ${g.turn}`}</span>
         </div>
         <div className="e6__tile e6__tile--starter">
           <span className="label">Commence à parler</span>
-          <span className="e6__tile-value">{game.starter ?? "—"}</span>
+          <span className="e6__tile-value">{g.starter ?? "—"}</span>
         </div>
       </div>
       <section className="e6__section">
@@ -63,12 +67,12 @@ export function E6({ onNavigate }: ScreenProps) {
           ))}
         </div>
       </section>
-      {game.eliminated.length > 0 && (
+      {g.eliminated.length > 0 && (
         <section className="e6__section">
-          <h2 className="heading">Éliminés · {game.eliminated.length}</h2>
+          <h2 className="heading">Éliminés · {g.eliminated.length}</h2>
           <div className="e6__dead">
-            {game.eliminated.map((name) => (
-              <RoleReveal key={name} playerName={name} role={game.roles[name]} animate={false} />
+            {g.eliminated.map((name) => (
+              <RoleReveal key={name} playerName={name} role={g.roles[name]} animate={false} />
             ))}
           </div>
         </section>
