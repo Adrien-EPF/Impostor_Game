@@ -12,14 +12,14 @@ describe("App", () => {
 
   it("navigates to another screen via the screen picker, showing the top bar", async () => {
     render(<App />);
-    await userEvent.click(screen.getByRole("button", { name: "E4" }));
-    expect(screen.getByText(/Distribution/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "E6" }));
+    expect(screen.getByText(/Partie/)).toBeInTheDocument();
     expect(screen.getByRole("banner")).toBeInTheDocument();
   });
 
   it("hides the top bar again when navigating back to E1", async () => {
     render(<App />);
-    await userEvent.click(screen.getByRole("button", { name: "E4" }));
+    await userEvent.click(screen.getByRole("button", { name: "E6" }));
     await userEvent.click(screen.getByRole("button", { name: "E1" }));
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
   });

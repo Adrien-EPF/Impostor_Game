@@ -1,0 +1,128 @@
+.e4 {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.e4__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.e4__title {
+  margin: 0;
+}
+
+.e4__subtitle {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.e4__progress-track {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  overflow: hidden;
+}
+
+.e4__progress-fill {
+  height: 100%;
+  background: var(--turquoise);
+  transition: width 300ms ease-out;
+}
+
+.e4__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+  gap: var(--space-4);
+}
+
+.e4__tile {
+  min-height: 96px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sticker);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.e4__tile--seen {
+  background: var(--surface-tint);
+  box-shadow: none;
+}
+
+.e4__tile-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.e4__tile-state {
+  color: var(--ink-muted);
+}
+
+.e4__tile--seen .e4__tile-state {
+  color: var(--turquoise-deep);
+}
+
+.e4__start {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+  width: 100%;
+  align-self: center;
+  align-items: stretch;
+}
+
+.e4__start-label {
+  text-align: center;
+}
+
+.e4__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 42, 55, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 10;
+}
+
+.e4__modal {
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.e4__modal .btn {
+  width: 100%;
+}
+
+.e4__modal-hint {
+  color: var(--ink-muted);
+}

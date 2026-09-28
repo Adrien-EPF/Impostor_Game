@@ -1,8 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_SETTINGS } from "../../settings";
 import { loadGameState, saveGameState } from "../../state/gameState";
 import { E2 } from "./E2";
+
+function seedPlayers(players: string[]) {
+  saveGameState({ players, settings: DEFAULT_SETTINGS, game: null, cardPlayer: null });
+}
 
 function addPlayer(name: string) {
   return async () => {
@@ -25,7 +30,7 @@ describe("E2", () => {
   });
 
   it("restores a previously-entered player list", () => {
-    saveGameState({ players: ["Léa", "Sacha"] });
+    seedPlayers(["Léa", "Sacha"]);
     render(<E2 onNavigate={vi.fn()} />);
     expect(screen.getByDisplayValue("Léa")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Sacha")).toBeInTheDocument();
@@ -60,7 +65,7 @@ describe("E2", () => {
   });
 
   it("renames a player in place, reorders and deletes", async () => {
-    saveGameState({ players: ["Léa", "Sacha", "Nour"] });
+    seedPlayers(["Léa", "Sacha", "Nour"]);
     render(<E2 onNavigate={vi.fn()} />);
 
     await userEvent.clear(screen.getByDisplayValue("Sacha"));
@@ -75,7 +80,7 @@ describe("E2", () => {
   });
 
   it("flags an empty renamed row as invalid and blocks Continuer", async () => {
-    saveGameState({ players: ["Léa", "Sacha", "Nour"] });
+    seedPlayers(["Léa", "Sacha", "Nour"]);
     render(<E2 onNavigate={vi.fn()} />);
 
     await userEvent.clear(screen.getByDisplayValue("Sacha"));
@@ -85,7 +90,7 @@ describe("E2", () => {
   });
 
   it("enables Continuer at 3+ valid unique players and navigates to E3", async () => {
-    saveGameState({ players: ["Léa", "Sacha", "Nour"] });
+    seedPlayers(["Léa", "Sacha", "Nour"]);
     const onNavigate = vi.fn();
     render(<E2 onNavigate={onNavigate} />);
 
@@ -96,7 +101,7 @@ describe("E2", () => {
   });
 
   it("disables Ajouter once 20 players are reached and shows the cap caption", async () => {
-    saveGameState({ players: Array.from({ length: 20 }, (_, i) => `Joueur ${i + 1}`) });
+    seedPlayers(Array.from({ length: 20 }, (_, i) => `Joueur ${i + 1}`));
     render(<E2 onNavigate={vi.fn()} />);
     expect(screen.getByText("20 / 20")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Ajouter" })).toBeDisabled();
