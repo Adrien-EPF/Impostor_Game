@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/imposteur-design-system-04674365-4d46-4dd7-ad28-ff607466b766/styles.css">
+  <script src="_ds/imposteur-design-system-04674365-4d46-4dd7-ad28-ff607466b766/_ds_bundle.js"></script>
+  <style>
+    :root { --turquoise: #4acdcf; }
+    html, body { margin: 0; background: #ffffff; }
+    * { -webkit-tap-highlight-color: transparent; }
+    a { color: var(--turquoise-deep); }
+    a:hover { color: var(--ink); }
+    input::placeholder { color: var(--ink-muted); }
+    input:focus { outline: 3px solid var(--turquoise-deep); outline-offset: 2px; }
+  </style>
+</helmet>
+<div style="min-height:100vh;background:var(--surface);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column">
+
+  <sc-if value="{{ showTopbar }}" hint-placeholder-val="{{ false }}">
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;border-bottom:2px solid var(--surface-tint);min-height:72px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:16px">
+        <sc-if value="{{ showBack }}">
+          <button onClick="{{ goBack }}" style="min-height:44px;padding:0 16px;border-radius:var(--radius-pill);border:2px solid var(--ink);background:var(--surface);color:var(--ink);font-family:var(--font-sans);font-weight:800;font-size:15px;cursor:pointer">‹ Retour</button>
+        </sc-if>
+        <span style="font-family:var(--font-display);font-weight:800;font-size:26px;line-height:30px">Imposteur</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <sc-if value="{{ showStep }}">
+          <span class="caption" style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:4px 12px;font-weight:800">{{ stepLabel }}</span>
+        </sc-if>
+        <sc-if value="{{ showAbandon }}">
+          <button onClick="{{ askAbandon }}" style="min-height:44px;padding:0 16px;border-radius:var(--radius-pill);border:2px solid var(--ink-muted);background:var(--surface);color:var(--ink-muted);font-family:var(--font-sans);font-weight:800;font-size:15px;cursor:pointer">Abandonner</button>
+        </sc-if>
+      </div>
+    </header>
+  </sc-if>
+
+  <!-- E1 Accueil -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <main data-screen-label="E1 Accueil" style="box-sizing:border-box;width:100%;max-width:1040px;margin:0 auto;padding:var(--space-10) var(--space-6);flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:var(--space-10);align-items:center">
+      <div style="display:flex;flex-direction:column;gap:var(--space-4);align-items:flex-start">
+        <span style="background:var(--lemon-strong);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:6px 14px;font-weight:800;font-size:14px;transform:rotate(-3deg);box-shadow:var(--shadow-sticker)">Jeu d'ambiance · 3 à 20 joueurs</span>
+        <h1 style="margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(56px,8vw,104px);line-height:0.95;letter-spacing:-0.02em;max-width:100%;overflow-wrap:anywhere">Imposteur</h1>
+        <p class="body" style="margin:0;max-width:420px;color:var(--ink-muted);text-wrap:pretty">Un seul appareil, passé de main en main. Chacun reçoit un mot secret. Certains n'ont pas tout à fait le même. Démasquez-les.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div style="background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-2)">
+          <span class="caption" style="color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em">Bibliothèque de mots</span>
+          <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:48px;line-height:52px">{{ libCount }}</span>
+            <span class="label">groupes · {{ catCount }} catégories</span>
+          </div>
+          <span class="caption" style="color:var(--ink-muted)">{{ libSource }}</span>
+          <sc-if value="{{ hasReport }}">
+            <div style="margin-top:var(--space-2);padding:12px 16px;border-radius:var(--radius-sm);background:var(--lemon);border:2px solid var(--ink);display:flex;flex-direction:column;gap:4px">
+              <span class="label">{{ reportLine }}</span>
+              <sc-if value="{{ hasReportErrors }}">
+                <span class="caption" style="color:var(--danger)">{{ reportErrors }}</span>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ goPlayers }}" hint-size="100%,56px">Nouvelle partie</x-import>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+          <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ pickFile }}" hint-size="100%,56px">Importer des mots</x-import>
+          <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ goRules }}" hint-size="100%,56px">Règles</x-import>
+        </div>
+        <input type="file" accept=".csv,text/csv" ref="{{ fileRef }}" onChange="{{ onFile }}" style="display:none">
+        <span class="caption" style="color:var(--ink-muted)">CSV UTF-8 · séparateur « ; » ou « , » · colonnes categorie ; mot1 … mot6</span>
+      </div>
+    </main>
+  </sc-if>
+
+  <!-- Règles -->
+  <sc-if value="{{ isRules }}">
+    <main data-screen-label="Règles" style="box-sizing:border-box;width:100%;max-width:1040px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <h1 class="title" style="margin:0">Règles du jeu</h1>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:var(--space-4)">
+        <div style="background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);display:flex;flex-direction:column;gap:8px">
+          <span style="display:inline-flex;align-self:flex-start;background:var(--civil);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:2px 10px;font-weight:800;font-size:14px">Civil</span>
+          <p class="body" style="margin:0;text-wrap:pretty">Voit le mot commun à tous les civils. Ne connaît pas son rôle. Doit éliminer tous les infiltrés.</p>
+        </div>
+        <div style="background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);display:flex;flex-direction:column;gap:8px">
+          <span style="display:inline-flex;align-self:flex-start;background:var(--imposteur);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:2px 10px;font-weight:800;font-size:14px">Imposteur</span>
+          <p class="body" style="margin:0;text-wrap:pretty">Voit un mot proche, partagé avec les autres imposteurs. Il se croit civil. Doit survivre.</p>
+        </div>
+        <div style="background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);display:flex;flex-direction:column;gap:8px">
+          <span style="display:inline-flex;align-self:flex-start;background:var(--mr-white);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:2px 10px;font-weight:800;font-size:14px">Mr. White</span>
+          <p class="body" style="margin:0;text-wrap:pretty">Ne voit aucun mot et le sait. S'il est éliminé, il peut gagner en devinant le mot des civils.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--space-6)">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <h2 class="heading" style="margin:0">Déroulement</h2>
+          <ol class="body" style="margin:0;padding-left:24px;display:flex;flex-direction:column;gap:8px;text-wrap:pretty">
+            <li>Chacun touche son prénom, découvre son mot en privé, le cache, puis passe l'appareil.</li>
+            <li>L'application désigne qui commence. Chacun dit à voix haute un mot qui évoque le sien.</li>
+            <li>La table débat et vote à l'oral. On peut aussi n'éliminer personne.</li>
+            <li>Le joueur éliminé révèle son rôle. Une élimination est définitive.</li>
+          </ol>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <h2 class="heading" style="margin:0">Victoire</h2>
+          <ul class="body" style="margin:0;padding-left:24px;display:flex;flex-direction:column;gap:8px;text-wrap:pretty">
+            <li><b>Civils</b> : tous les imposteurs et Mr. White sont éliminés.</li>
+            <li><b>Infiltrés</b> : autant de civils que d'infiltrés encore en vie (parité).</li>
+            <li><b>Mode Nombre de tours</b> : les infiltrés gagnent aussi si l'un d'eux survit jusqu'à la fin du tour N.</li>
+            <li><b>Chance finale</b> : quand les infiltrés gagnent, chaque Mr. White encore en vie tente de deviner le mot des civils, pour l'honneur.</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <!-- E2 Joueurs -->
+  <sc-if value="{{ isPlayers }}">
+    <main data-screen-label="E2 Joueurs" style="box-sizing:border-box;width:100%;max-width:720px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <h1 class="title" style="margin:0">Qui joue ?</h1>
+        <span style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:4px 14px;font-weight:800;font-size:17px">{{ playerCount }} / 20</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:12px">
+          <input value="{{ nameInput }}" onChange="{{ onNameInput }}" onKeyDown="{{ onNameKey }}" placeholder="Prénom du joueur" maxlength="20" style="flex:1;box-sizing:border-box;height:56px;padding:0 22px;border:2px solid var(--ink);border-radius:var(--radius-pill);font-family:var(--font-sans);font-size:18px;font-weight:600;color:var(--ink);background:var(--surface);min-width:0">
+          <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ addName }}" disabled="{{ addDisabled }}" hint-size="120px,56px">Ajouter</x-import>
+        </div>
+        <sc-if value="{{ hasNameError }}">
+          <span class="caption" style="color:var(--danger);padding-left:22px">{{ nameError }}</span>
+        </sc-if>
+      </div>
+      <sc-if value="{{ hasPlayers }}">
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ playerRows }}" as="p" hint-placeholder-count="4">
+            <li style="display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;background:var(--surface-tint);border:2px solid {{ p.border }};border-radius:var(--radius-lg)">
+              <span style="width:28px;font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--turquoise-deep)">{{ p.num }}</span>
+              <input value="{{ p.name }}" onChange="{{ p.onChange }}" aria-label="Prénom" maxlength="20" style="flex:1;min-width:0;height:44px;box-sizing:border-box;padding:0 12px;border:0;border-radius:var(--radius-sm);background:transparent;font-family:var(--font-sans);font-size:18px;font-weight:800;color:var(--ink)">
+              <sc-if value="{{ p.dup }}">
+                <span class="caption" style="color:var(--danger)">{{ p.err }}</span>
+              </sc-if>
+              <div style="display:flex;gap:6px">
+                <button onClick="{{ p.up }}" disabled="{{ p.isFirst }}" aria-label="Monter" style="width:44px;height:44px;border-radius:var(--radius-pill);border:2px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:800;font-size:16px;cursor:pointer;padding:0;opacity:{{ p.upOp }}">↑</button>
+                <button onClick="{{ p.down }}" disabled="{{ p.isLast }}" aria-label="Descendre" style="width:44px;height:44px;border-radius:var(--radius-pill);border:2px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:800;font-size:16px;cursor:pointer;padding:0;opacity:{{ p.downOp }}">↓</button>
+                <button onClick="{{ p.remove }}" aria-label="Supprimer" style="width:44px;height:44px;border-radius:var(--radius-pill);border:2px solid var(--ink);background:var(--surface);color:var(--ink);font-weight:800;font-size:18px;cursor:pointer;padding:0">×</button>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </sc-if>
+      <sc-if value="{{ noPlayers }}">
+        <div style="border:2px dashed var(--ink-muted);border-radius:var(--radius-lg);padding:var(--space-10) var(--space-6);text-align:center">
+          <p class="body" style="margin:0;color:var(--ink-muted)">Ajoute au moins 3 prénoms pour commencer.</p>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch">
+        <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ goSettings }}" disabled="{{ playersBlocked }}" hint-size="100%,56px">Continuer</x-import>
+        <sc-if value="{{ playersBlocked }}">
+          <span class="caption" style="color:var(--ink-muted);text-align:center">{{ playersMsg }}</span>
+        </sc-if>
+      </div>
+    </main>
+  </sc-if>
+
+  <!-- E3 Réglages -->
+  <sc-if value="{{ isSettings }}">
+    <main data-screen-label="E3 Réglages" style="box-sizing:border-box;width:100%;max-width:1040px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <h1 class="title" style="margin:0">Réglages</h1>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--space-6);align-items:start">
+        <section style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <h2 class="heading" style="margin:0">Composition</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 12px 12px 20px;background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="width:14px;height:14px;border-radius:50%;background:var(--imposteur);border:2px solid var(--ink)"></span>
+              <span class="label">Imposteurs</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ decImp }}" aria-label="Moins d'imposteurs" hint-size="64px,56px">−</x-import>
+              <span style="min-width:36px;text-align:center;font-family:var(--font-display);font-weight:800;font-size:32px">{{ impCount }}</span>
+              <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ incImp }}" aria-label="Plus d'imposteurs" hint-size="64px,56px">+</x-import>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 12px 12px 20px;background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="width:14px;height:14px;border-radius:50%;background:var(--mr-white);border:2px solid var(--ink)"></span>
+              <span class="label">Mr. White</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ decMw }}" aria-label="Moins de Mr. White" hint-size="64px,56px">−</x-import>
+              <span style="min-width:36px;text-align:center;font-family:var(--font-display);font-weight:800;font-size:32px">{{ mwCount }}</span>
+              <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ incMw }}" aria-label="Plus de Mr. White" hint-size="64px,56px">+</x-import>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 20px;background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-lg)">
+            <span class="label">{{ playerCount }} joueurs</span>
+            <span class="caption" style="color:var(--ink)">→ {{ civCount }} civils · {{ infCount }} infiltrés · {{ maxInfLabel }}</span>
+          </div>
+          <sc-if value="{{ compoBad }}">
+            <div style="padding:12px 16px;border-radius:var(--radius-sm);border:2px solid var(--danger);color:var(--danger);font-weight:700;font-size:15px">{{ compoMsg }}</div>
+          </sc-if>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <h2 class="heading" style="margin:0">Mode de victoire</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <button onClick="{{ setClassic }}" aria-pressed="{{ modeClassic }}" style="text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:16px;border:2px solid var(--ink);border-radius:var(--radius-lg);background:{{ classicBg }};box-shadow:{{ classicShadow }};color:var(--ink);font-family:var(--font-sans)">
+              <span class="label">Classique</span>
+              <span class="caption" style="color:var(--ink)">Les infiltrés gagnent à la parité.</span>
+            </button>
+            <button onClick="{{ setTours }}" aria-pressed="{{ modeTours }}" style="text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:16px;border:2px solid var(--ink);border-radius:var(--radius-lg);background:{{ toursBg }};box-shadow:{{ toursShadow }};color:var(--ink);font-family:var(--font-sans)">
+              <span class="label">Nombre de tours</span>
+              <span class="caption" style="color:var(--ink)">Ou s'ils survivent jusqu'au tour N.</span>
+            </button>
+          </div>
+          <sc-if value="{{ modeTours }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 12px 12px 20px;background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg)">
+              <span class="label">Tours (N)</span>
+              <div style="display:flex;align-items:center;gap:12px">
+                <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ decN }}" aria-label="Moins de tours" hint-size="64px,56px">−</x-import>
+                <span style="min-width:36px;text-align:center;font-family:var(--font-display);font-weight:800;font-size:32px">{{ nVal }}</span>
+                <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ incN }}" aria-label="Plus de tours" hint-size="64px,56px">+</x-import>
+              </div>
+            </div>
+          </sc-if>
+          <h2 class="heading" style="margin:8px 0 0">Catégories</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ catChips }}" as="c" hint-placeholder-count="6">
+              <button onClick="{{ c.toggle }}" aria-pressed="{{ c.on }}" style="min-height:44px;padding:0 16px;display:flex;align-items:center;gap:8px;border-radius:var(--radius-pill);border:2px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font-family:var(--font-sans);font-weight:800;font-size:15px;cursor:pointer">
+                <span>{{ c.mark }}</span><span>{{ c.label }}</span><span style="font-weight:600;opacity:0.8">{{ c.count }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </section>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:480px;width:100%;align-self:center">
+        <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ launch }}" disabled="{{ launchBlocked }}" hint-size="100%,56px">Lancer la partie</x-import>
+        <sc-if value="{{ launchBlocked }}">
+          <span class="caption" style="color:var(--ink-muted);text-align:center">{{ launchMsg }}</span>
+        </sc-if>
+      </div>
+    </main>
+  </sc-if>
+
+  <!-- E4 Distribution -->
+  <sc-if value="{{ isDist }}">
+    <main data-screen-label="E4 Distribution" style="box-sizing:border-box;width:100%;max-width:1040px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h1 class="title" style="margin:0">Touche ton prénom</h1>
+        <p class="body" style="margin:0;color:var(--ink-muted)">Chacun découvre son mot en secret, puis passe l'appareil. {{ seenCount }} sur {{ playerCount }} ont vu leur mot.</p>
+      </div>
+      <div style="height:12px;border-radius:var(--radius-pill);background:var(--surface-tint);border:2px solid var(--ink);overflow:hidden">
+        <div style="height:100%;width:{{ seenPct }};background:var(--turquoise);transition:width 300ms ease-out"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:var(--space-4)">
+        <sc-for list="{{ distTiles }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onTap }}" style="min-height:96px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px solid var(--ink);border-radius:var(--radius-lg);background:{{ t.bg }};box-shadow:{{ t.shadow }};color:var(--ink);cursor:pointer;font-family:var(--font-sans)">
+            <span style="font-family:var(--font-display);font-weight:700;font-size:24px;line-height:28px">{{ t.name }}</span>
+            <span class="caption" style="color:{{ t.stateColor }}">{{ t.state }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ allSeen }}">
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:480px;width:100%;align-self:center;align-items:stretch">
+          <span class="label" style="text-align:center">Tout le monde a son mot.</span>
+          <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ startGame }}" hint-size="100%,56px">Commencer le tour 1</x-import>
+        </div>
+      </sc-if>
+    </main>
+  </sc-if>
+
+  <!-- E5 Carte secrète -->
+  <sc-if value="{{ isCard }}">
+    <main data-screen-label="E5 Carte secrète" style="box-sizing:border-box;width:100%;max-width:720px;margin:0 auto;padding:var(--space-10) var(--space-6);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6)">
+      <x-import component-from-global-scope="Imposteur.SecretCard" player-name="{{ cardName }}" word="{{ cardWord }}" onMemorized="{{ onMemorized }}" hint-size="320px,380px"></x-import>
+    </main>
+  </sc-if>
+
+  <!-- E6 Partie -->
+  <sc-if value="{{ isGame }}">
+    <main data-screen-label="E6 Partie" style="box-sizing:border-box;width:100%;max-width:1200px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:var(--space-4)">
+        <div style="background:var(--surface-tint);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);display:flex;flex-direction:column;justify-content:center;gap:4px">
+          <span class="label" style="color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em">{{ turnKicker }}</span>
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(56px,7vw,80px);line-height:1">{{ turnLabel }}</span>
+        </div>
+        <div style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-6);box-shadow:var(--shadow-sticker);display:flex;flex-direction:column;justify-content:center;gap:4px">
+          <span class="label" style="text-transform:uppercase;letter-spacing:0.06em">Commence à parler</span>
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(56px,7vw,80px);line-height:1;overflow-wrap:anywhere">{{ starter }}</span>
+        </div>
+      </div>
+      <section style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <h2 class="heading" style="margin:0;font-size:28px;line-height:34px">En jeu · {{ aliveCount }}</h2>
+          <span class="body" style="color:var(--ink-muted)">Après le vote, touche le joueur éliminé.</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:var(--space-4)">
+          <sc-for list="{{ aliveTiles }}" as="t" hint-placeholder-count="6">
+            <button onClick="{{ t.onTap }}" style="min-height:104px;padding:16px;display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-sticker);color:var(--ink);cursor:pointer;font-family:var(--font-display);font-weight:800;font-size:30px;line-height:34px;overflow-wrap:anywhere">{{ t.name }}</button>
+          </sc-for>
+        </div>
+      </section>
+      <sc-if value="{{ hasDead }}">
+        <section style="display:flex;flex-direction:column;gap:var(--space-4)">
+          <h2 class="heading" style="margin:0;font-size:28px;line-height:34px">Éliminés · {{ deadCount }}</h2>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-4)">
+            <sc-for list="{{ deadTiles }}" as="d" hint-placeholder-count="1">
+              <x-import component-from-global-scope="Imposteur.RoleReveal" player-name="{{ d.name }}" role="{{ d.role }}" animate="{{ false }}" hint-size="180px,200px"></x-import>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+      <div style="display:flex;justify-content:center">
+        <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ nobody }}" hint-size="280px,56px">Personne n'est éliminé</x-import>
+      </div>
+    </main>
+  </sc-if>
+
+  <!-- E7 Élimination -->
+  <sc-if value="{{ isElim }}">
+    <main data-screen-label="E7 Élimination" style="box-sizing:border-box;width:100%;max-width:640px;margin:0 auto;padding:var(--space-10) var(--space-6);flex:1;display:flex;flex-direction:column;align-items:center;gap:var(--space-6)">
+      <sc-if value="{{ elimPending }}">
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:var(--space-6)">
+          <span class="label" style="color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em">La table a voté contre</span>
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(56px,10vw,88px);line-height:1;text-align:center;overflow-wrap:anywhere">{{ elimName }}</span>
+          <label style="width:100%;box-sizing:border-box;display:flex;align-items:center;gap:16px;padding:16px 20px;min-height:72px;border:2px solid var(--ink);border-radius:var(--radius-lg);background:{{ checkBg }};cursor:pointer">
+            <input type="checkbox" checked="{{ elimChecked }}" onChange="{{ toggleElim }}" style="width:28px;height:28px;accent-color:var(--danger);cursor:pointer;margin:0">
+            <span style="display:flex;flex-direction:column;gap:2px">
+              <span class="label">Éliminer {{ elimName }}</span>
+              <span class="caption" style="color:var(--ink-muted)">Son rôle sera révélé à toute la table. C'est définitif.</span>
+            </span>
+          </label>
+          <div style="width:100%;display:flex;flex-direction:column">
+            <x-import component-from-global-scope="Imposteur.Button" variant="danger" onClick="{{ confirmElim }}" disabled="{{ confirmBlocked }}" hint-size="100%,56px">Confirmer l'élimination</x-import>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ elimDone }}">
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:var(--space-6)">
+          <span class="label" style="color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em">{{ elimVerdict }}</span>
+          <div style="transform:scale(1.25);transform-origin:center top;margin-bottom:56px">
+            <x-import component-from-global-scope="Imposteur.RoleReveal" player-name="{{ elimName }}" role="{{ elimRole }}" animate="{{ true }}" hint-size="180px,200px"></x-import>
+          </div>
+          <sc-if value="{{ showMwInput }}">
+            <div style="width:100%;display:flex;flex-direction:column;gap:var(--space-4);padding:var(--space-6);box-sizing:border-box;background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-lg)">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span class="heading">Dernière chance, {{ elimName }}</span>
+                <span class="body" style="color:var(--ink-muted)">Devine le mot des civils. Une seule tentative : si tu trouves, ton camp gagne.</span>
+              </div>
+              <input value="{{ mwInput }}" onChange="{{ onMwInput }}" onKeyDown="{{ onMwKey }}" placeholder="Le mot des civils" autocomplete="off" style="box-sizing:border-box;height:56px;padding:0 22px;border:2px solid var(--ink);border-radius:var(--radius-pill);font-family:var(--font-sans);font-size:18px;font-weight:600;color:var(--ink);background:var(--surface);min-width:0">
+              <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ submitMw }}" disabled="{{ mwEmpty }}" hint-size="100%,56px">Valider le mot</x-import>
+            </div>
+          </sc-if>
+          <sc-if value="{{ mwMissed }}">
+            <div style="width:100%;box-sizing:border-box;padding:16px 20px;border:2px solid var(--ink);border-radius:var(--radius-lg);text-align:center">
+              <span class="label">Raté. « {{ mwInput }} » n'est pas le mot des civils.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showContinue }}">
+            <div style="width:100%;display:flex;flex-direction:column">
+              <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ continueElim }}" hint-size="100%,56px">Continuer</x-import>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </main>
+  </sc-if>
+
+  <!-- E8 Fin de partie -->
+  <sc-if value="{{ isEnd }}">
+    <main data-screen-label="E8 Fin de partie" style="box-sizing:border-box;width:100%;max-width:1200px;margin:0 auto;padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-6)">
+      <sc-if value="{{ finalPhase }}">
+        <div style="max-width:560px;width:100%;margin:0 auto;padding-top:var(--space-6);display:flex;flex-direction:column;align-items:center;gap:var(--space-6)">
+          <span class="label" style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-pill);padding:6px 14px;text-align:center">Les infiltrés ont gagné · Chance finale {{ finalNum }}/{{ finalTotal }}</span>
+          <x-import component-from-global-scope="Imposteur.RoleReveal" player-name="{{ finalName }}" role="mr-white" animate="{{ true }}" hint-size="180px,200px"></x-import>
+          <p class="body" style="margin:0;text-align:center;text-wrap:pretty">{{ finalName }}, tu as survécu. Devine le mot des civils pour l'honneur : l'issue de la partie ne change pas.</p>
+          <sc-if value="{{ finalAsking }}">
+            <div style="width:100%;display:flex;flex-direction:column;gap:var(--space-4)">
+              <input value="{{ finalInput }}" onChange="{{ onFinalInput }}" onKeyDown="{{ onFinalKey }}" placeholder="Le mot des civils" autocomplete="off" style="box-sizing:border-box;height:56px;padding:0 22px;border:2px solid var(--ink);border-radius:var(--radius-pill);font-family:var(--font-sans);font-size:18px;font-weight:600;color:var(--ink);background:var(--surface);min-width:0">
+              <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ submitFinal }}" disabled="{{ finalEmpty }}" hint-size="100%,56px">Deviner le mot</x-import>
+            </div>
+          </sc-if>
+          <sc-if value="{{ finalAnswered }}">
+            <div style="width:100%;display:flex;flex-direction:column;gap:var(--space-4)">
+              <div style="box-sizing:border-box;padding:16px 20px;border:2px solid var(--ink);border-radius:var(--radius-lg);background:{{ finalFbBg }};text-align:center">
+                <span class="label">{{ finalFeedback }}</span>
+              </div>
+              <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ nextFinal }}" hint-size="100%,56px">{{ nextFinalLabel }}</x-import>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ resultPhase }}">
+        <div style="display:flex;flex-direction:column;gap:var(--space-6)">
+          <div style="background:{{ winBg }};border:2px solid var(--ink);border-radius:var(--radius-lg);box-shadow:var(--shadow-sticker);padding:var(--space-10) var(--space-6);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+            <span class="label" style="text-transform:uppercase;letter-spacing:0.06em">{{ causeText }}</span>
+            <h1 style="margin:0;font-family:var(--font-display);font-weight:800;font-size:clamp(48px,8vw,88px);line-height:1">{{ winnerTitle }}</h1>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:var(--space-4)">
+            <div style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-6);display:flex;flex-direction:column;gap:2px">
+              <span class="caption">Mot des civils</span>
+              <span style="font-family:var(--font-display);font-weight:800;font-size:40px;line-height:44px">{{ civilWord }}</span>
+            </div>
+            <sc-if value="{{ hasImpWord }}">
+              <div style="background:var(--lemon);border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-6);display:flex;flex-direction:column;gap:2px">
+                <span class="caption">Mot des imposteurs</span>
+                <span style="font-family:var(--font-display);font-weight:800;font-size:40px;line-height:44px">{{ impWord }}</span>
+              </div>
+            </sc-if>
+            <div style="border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-6);display:flex;flex-direction:column;gap:2px">
+              <span class="caption">Catégorie · tours joués</span>
+              <span style="font-family:var(--font-display);font-weight:800;font-size:28px;line-height:44px">{{ endCat }} · {{ turnsPlayed }}</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-4);justify-content:center">
+            <sc-for list="{{ board }}" as="b" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:180px">
+                <x-import component-from-global-scope="Imposteur.RoleReveal" player-name="{{ b.name }}" role="{{ b.role }}" animate="{{ false }}" hint-size="180px,200px"></x-import>
+                <span class="label" style="text-align:center">{{ b.word }}</span>
+                <span class="caption" style="color:var(--ink-muted);text-align:center">{{ b.status }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--space-4);max-width:560px;width:100%;align-self:center">
+            <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ replay }}" hint-size="100%,56px">Rejouer</x-import>
+            <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ newGame }}" hint-size="100%,56px">Nouvelle partie</x-import>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </sc-if>
+
+  <!-- Modales -->
+  <sc-if value="{{ reviewAsk }}">
+    <div style="position:fixed;inset:0;background:rgba(31,42,55,0.55);display:grid;place-items:center;padding:24px;z-index:10">
+      <div style="width:100%;max-width:420px;box-sizing:border-box;background:var(--surface);border:2px solid var(--ink);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)">
+        <span class="heading">Revoir le mot de {{ reviewName }} ?</span>
+        <span class="body" style="color:var(--ink-muted)">Seul·e {{ reviewName }} doit regarder l'écran.</span>
+        <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ confirmReview }}" hint-size="100%,56px">Oui, c'est moi</x-import>
+        <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ cancelReview }}" hint-size="100%,56px">Non</x-import>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ abandonAsk }}">
+    <div style="position:fixed;inset:0;background:rgba(31,42,55,0.55);display:grid;place-items:center;padding:24px;z-index:10">
+      <div style="width:100%;max-width:420px;box-sizing:border-box;background:var(--surface);border:2px solid var(--ink);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)">
+        <span class="heading">Abandonner la partie ?</span>
+        <span class="body" style="color:var(--ink-muted)">Les mots et les rôles seront perdus. Les joueurs et réglages sont conservés.</span>
+        <x-import component-from-global-scope="Imposteur.Button" variant="primary" onClick="{{ cancelAbandon }}" hint-size="100%,56px">Continuer la partie</x-import>
+        <x-import component-from-global-scope="Imposteur.Button" variant="secondary" onClick="{{ abandon }}" hint-size="100%,56px">Abandonner</x-import>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;ecran&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Jeu réel&quot;, &quot;options&quot;: [&quot;Jeu réel&quot;, &quot;E1 Accueil&quot;, &quot;Règles&quot;, &quot;E2 Joueurs&quot;, &quot;E3 Réglages&quot;, &quot;E4 Distribution&quot;, &quot;E5 Carte secrète&quot;, &quot;E6 Partie&quot;, &quot;E7 Élimination&quot;, &quot;E8 Fin (civils)&quot;, &quot;E8 Chance finale&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Aperçu&quot;}}">
+const LS_GAME = 'imposteur.etat.v1', LS_MEMO = 'imposteur.reglages.v1', LS_LIB = 'imposteur.bibliotheque.v1';
+const DEFAULT_LIB = [
+  { cat: 'Boissons', words: ['Coca', 'Fanta', 'Orangina', 'Iced Tea', 'RedBull'] },
+  { cat: 'Animaux', words: ['Chat', 'Tigre', 'Lion', 'Lynx', 'Guépard', 'Panthère'] },
+  { cat: 'Animaux', words: ['Dauphin', 'Requin', 'Baleine', 'Orque', 'Phoque'] },
+  { cat: 'Sports', words: ['Tennis', 'Ping-pong', 'Badminton', 'Squash', 'Padel'] },
+  { cat: 'Cuisine', words: ['Crêpe', 'Gaufre', 'Pancake', 'Beignet', 'Churros'] },
+  { cat: 'Cuisine', words: ['Pizza', 'Tarte flambée', 'Quiche', 'Focaccia'] },
+  { cat: 'Lieux', words: ['Plage', 'Piscine', 'Lac', 'Rivière', 'Mer'] },
+  { cat: 'Lieux', words: ['Cinéma', 'Théâtre', 'Opéra', 'Cirque', 'Concert'] },
+  { cat: 'Musique', words: ['Guitare', 'Violon', 'Ukulélé', 'Banjo', 'Harpe'] },
+  { cat: 'Transports', words: ['Vélo', 'Trottinette', 'Skate', 'Roller', 'Moto'] },
+  { cat: 'Métiers', words: ['Pompier', 'Policier', 'Gendarme', 'Militaire', 'Douanier'] },
+  { cat: 'Objets', words: ['Parapluie', 'Parasol', 'Chapeau', 'Casquette', 'Capuche'] }
+];
+const DEF_SETTINGS = { imp: 1, mw: 0, mode: 'classic', n: null, excluded: [] };
+const ROLE_NAME = { civil: 'Civil', imposteur: 'Imposteur', 'mr-white': 'Mr. White' };
+
+function rd(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function wr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function rnd(n) { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s\-'’]/g, ''); }
+function lev(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function accept(guess, word) {
+  const g = norm(guess), w = norm(word);
+  if (!g) return false;
+  if (g === w) return true;
+  return lev(g, w) <= (w.length <= 6 ? 1 : 2);
+}
+function parseCSV(text) {
+  const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
+  const sep = (lines[0] || '').includes(';') ? ';' : ',';
+  const groups = [], errors = [];
+  lines.slice(1).forEach((line, i) => {
+    if (!line.trim()) return;
+    const cells = line.split(sep).map(c => c.trim().replace(/^"|"$/g, '').trim());
+    const cat = cells[0];
+    const words = [], seen = new Set();
+    cells.slice(1, 7).forEach(w => { if (w && !seen.has(norm(w))) { seen.add(norm(w)); words.push(w); } });
+    if (!cat || words.length < 4) errors.push(i + 2); else groups.push({ cat, words });
+  });
+  return { groups, errors };
+}
+function pickStarter(game, players) {
+  const c = players.filter(p => !game.eliminated.includes(p) && game.roles[p] !== 'mr-white');
+  return c.length ? c[rnd(c.length)] : null;
+}
+const RESET_UI = { elimTarget: null, elimChecked: false, elimDone: false, mwInput: '', mwResult: null, abandonAsk: false, reviewAsk: null };
+
+function demoState(code) {
+  const players = ['Léa', 'Hugo', 'Samir', 'Chloé', 'Max', 'Inès', 'Tom'];
+  const roles = { Léa: 'civil', Hugo: 'civil', Samir: 'imposteur', Chloé: 'civil', Max: 'civil', Inès: 'mr-white', Tom: 'civil' };
+  const game = { roles, civilWord: 'Orangina', impWord: 'Fanta', cat: 'Boissons', seen: {}, eliminated: [], turn: 1, starter: 'Hugo', winner: null, cause: null, mwWins: {}, finalList: [], finalIdx: 0 };
+  const base = { v: 1, players, settings: { ...DEF_SETTINGS, imp: 1, mw: 1 }, game: null, cardPlayer: null, nameInput: '', nameError: '', finalInput: '', finalAnswer: null, ...RESET_UI };
+  const allSeen = Object.fromEntries(players.map(p => [p, true]));
+  switch (code) {
+    case 'E1': return { ...base, screen: 'home' };
+    case 'R': return { ...base, screen: 'rules' };
+    case 'E2': return { ...base, screen: 'players' };
+    case 'E3': return { ...base, screen: 'settings' };
+    case 'E4': return { ...base, screen: 'dist', game: { ...game, seen: { Léa: true, Hugo: true, Samir: true } } };
+    case 'E5': return { ...base, screen: 'card', cardPlayer: 'Chloé', game: { ...game, seen: { Léa: true, Hugo: true, Samir: true } } };
+    case 'E6': return { ...base, screen: 'game', game: { ...game, seen: allSeen, eliminated: ['Max'], turn: 2, starter: 'Léa' } };
+    case 'E7': return { ...base, screen: 'elim', elimTarget: 'Inès', game: { ...game, seen: allSeen, eliminated: ['Max'], turn: 2, starter: 'Léa' } };
+    case 'E8': return { ...base, screen: 'end', game: { ...game, seen: allSeen, eliminated: ['Max', 'Inès', 'Samir'], turn: 3, winner: 'civils', cause: 'elimination' } };
+    case 'E8b': return { ...base, screen: 'end', game: { ...game, seen: allSeen, eliminated: ['Max', 'Hugo', 'Léa'], turn: 3, winner: 'infiltres', cause: 'parite', finalList: ['Inès'] } };
+  }
+  return null;
+}
+const ECRAN_CODES = { 'E1 Accueil': 'E1', 'Règles': 'R', 'E2 Joueurs': 'E2', 'E3 Réglages': 'E3', 'E4 Distribution': 'E4', 'E5 Carte secrète': 'E5', 'E6 Partie': 'E6', 'E7 Élimination': 'E7', 'E8 Fin (civils)': 'E8', 'E8 Chance finale': 'E8b' };
+
+class Component extends DCLogic {
+  fileRef = React.createRef();
+  state = this.load();
+
+  load() {
+    const lib = rd(LS_LIB) || { groups: DEFAULT_LIB, source: null };
+    const saved = rd(LS_GAME);
+    if (saved && saved.v === 1) return { ...saved, lib, importReport: null };
+    const memo = rd(LS_MEMO) || {};
+    return { v: 1, screen: 'home', players: memo.players || [], settings: { ...DEF_SETTINGS, ...(memo.settings || {}) }, game: null, cardPlayer: null, nameInput: '', nameError: '', finalInput: '', finalAnswer: null, lib, importReport: null, ...RESET_UI };
+  }
+  demoCode() { return ECRAN_CODES[this.props.ecran] || null; }
+  componentDidMount() { const c = this.demoCode(); if (c) this.setState(demoState(c)); }
+  componentDidUpdate(prev) {
+    if (prev.ecran !== this.props.ecran) { const c = this.demoCode(); this.setState(c ? demoState(c) : this.load()); return; }
+    if (this.demoCode()) return;
+    const { lib, importReport, ...rest } = this.state;
+    wr(LS_GAME, rest);
+  }
+  go(screen, extra) { this.setState({ screen, ...RESET_UI, ...(extra || {}) }); if (typeof window !== 'undefined') window.scrollTo(0, 0); }
+
+  addName() {
+    const t = this.state.nameInput.trim();
+    if (!t) return;
+    if (this.state.players.length >= 20) return this.setState({ nameError: '20 joueurs maximum.' });
+    if (this.state.players.some(p => norm(p) === norm(t))) return this.setState({ nameError: `« ${t} » est déjà dans la liste.` });
+    this.setState(s => ({ players: [...s.players, t], nameInput: '', nameError: '' }));
+  }
+  move(i, d) { this.setState(s => { const p = s.players.slice(); [p[i], p[i + d]] = [p[i + d], p[i]]; return { players: p }; }); }
+  setSet(patch) { this.setState(s => ({ settings: { ...s.settings, ...patch } })); }
+  nEff() { const s = this.state.settings; return s.n ?? Math.max(1, this.state.players.length - 2); }
+
+  onFile(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    f.text().then(text => {
+      const { groups, errors } = parseCSV(text);
+      const report = { count: groups.length, errors };
+      if (groups.length) {
+        const lib = { groups, source: f.name };
+        wr(LS_LIB, lib);
+        this.setState({ lib, importReport: report });
+      } else this.setState({ importReport: report });
+    });
+    e.target.value = '';
+  }
+
+  launch() {
+    const { players, settings, lib } = this.state;
+    const groups = lib.groups.filter(g => !settings.excluded.includes(g.cat));
+    if (!groups.length) return;
+    const g = groups[rnd(groups.length)];
+    const w = shuffle(g.words);
+    const pool = [...Array(settings.imp).fill('imposteur'), ...Array(settings.mw).fill('mr-white')];
+    while (pool.length < players.length) pool.push('civil');
+    const r = shuffle(pool), roles = {};
+    players.forEach((p, i) => { roles[p] = r[i]; });
+    const game = { roles, civilWord: w[0], impWord: w[1], cat: g.cat, seen: {}, eliminated: [], turn: 1, starter: null, winner: null, cause: null, mwWins: {}, finalList: [], finalIdx: 0 };
+    game.starter = pickStarter(game, players);
+    wr(LS_MEMO, { players, settings });
+    this.go('dist', { game, cardPlayer: null, finalInput: '', finalAnswer: null });
+  }
+
+  concludeTurn(mwFound) {
+    const { players, settings } = this.state;
+    const g = { ...this.state.game };
+    const alive = players.filter(p => !g.eliminated.includes(p));
+    const inf = alive.filter(p => g.roles[p] !== 'civil').length, civ = alive.length - inf;
+    let winner = null, cause = null;
+    if (mwFound) { winner = 'infiltres'; cause = 'mr-white'; }
+    else if (inf === 0) { winner = 'civils'; cause = 'elimination'; }
+    else if (civ <= inf) { winner = 'infiltres'; cause = 'parite'; }
+    else if (settings.mode === 'tours' && g.turn >= this.nEff()) { winner = 'infiltres'; cause = 'survie'; }
+    if (winner) {
+      g.winner = winner; g.cause = cause; g.finalIdx = 0;
+      g.finalList = winner === 'infiltres' ? alive.filter(p => g.roles[p] === 'mr-white') : [];
+      this.go('end', { game: g, finalInput: '', finalAnswer: null });
+    } else {
+      g.turn += 1; g.starter = pickStarter(g, players);
+      this.go('game', { game: g });
+    }
+  }
+
+  renderVals() {
+    const s = this.state, P = s.players, set = s.settings, g = s.game, scr = s.screen;
+    const n = P.length;
+    const cats = [...new Set(s.lib.groups.map(x => x.cat))];
+    const isHome = scr === 'home';
+
+    // E2
+    const norms = P.map(norm);
+    const playerRows = P.map((name, i) => {
+      const empty = !name.trim();
+      const dup = !empty && norms.indexOf(norms[i]) !== i;
+      return {
+        name, num: i + 1, dup: dup || empty, err: empty ? 'Vide' : 'Doublon',
+        border: dup || empty ? 'var(--danger)' : 'var(--ink)',
+        isFirst: i === 0, isLast: i === n - 1, upOp: i === 0 ? 0.35 : 1, downOp: i === n - 1 ? 0.35 : 1,
+        onChange: e => { const v = e.target.value; this.setState(st => { const p = st.players.slice(); p[i] = v; return { players: p }; }); },
+        up: () => this.move(i, -1), down: () => this.move(i, 1),
+        remove: () => this.setState(st => ({ players: st.players.filter((_, j) => j !== i) }))
+      };
+    });
+    const badRows = playerRows.some(r => r.dup);
+    const playersBlocked = n < 3 || badRows;
+    const playersMsg = n < 3 ? `Encore ${3 - n} prénom${3 - n > 1 ? 's' : ''} pour pouvoir jouer.` : 'Corrige les prénoms en double ou vides.';
+
+    // E3
+    const inf = set.imp + set.mw, civ = n - inf, maxInf = Math.max(0, Math.floor((n - 1) / 2));
+    let compoMsg = '';
+    if (inf < 1) compoMsg = 'Il faut au moins un infiltré (imposteur ou Mr. White).';
+    else if (civ <= inf) compoMsg = `Trop d'infiltrés : il faut plus de civils que d'infiltrés. Avec ${n} joueurs, ${maxInf} infiltré${maxInf > 1 ? 's' : ''} au maximum.`;
+    const usable = s.lib.groups.filter(x => !set.excluded.includes(x.cat)).length;
+    const launchBlocked = !!compoMsg || usable === 0;
+    const catChips = cats.map(c => {
+      const on = !set.excluded.includes(c);
+      return {
+        label: c, on, mark: on ? '✓' : '+', count: s.lib.groups.filter(x => x.cat === c).length,
+        bg: on ? 'var(--turquoise)' : 'var(--surface)', border: on ? 'var(--ink)' : 'var(--ink-muted)', color: on ? 'var(--ink)' : 'var(--ink-muted)',
+        toggle: () => this.setSet({ excluded: on ? [...set.excluded, c] : set.excluded.filter(x => x !== c) })
+      };
+    });
+
+    // E4
+    const seenCount = g ? P.filter(p => g.seen[p]).length : 0;
+    const distTiles = P.map(name => {
+      const seen = g && g.seen[name];
+      return {
+        name, state: seen ? '✓ Mot vu' : 'À toi de voir', stateColor: seen ? 'var(--turquoise-deep)' : 'var(--ink-muted)',
+        bg: seen ? 'var(--surface-tint)' : 'var(--surface)', shadow: seen ? 'none' : 'var(--shadow-sticker)',
+        onTap: () => seen ? this.setState({ reviewAsk: name }) : this.go('card', { cardPlayer: name })
+      };
+    });
+
+    // E6
+    const alive = g ? P.filter(p => !g.eliminated.includes(p)) : [];
+    const tours = set.mode === 'tours';
+
+    // E7
+    const elimRole = g && s.elimTarget ? g.roles[s.elimTarget] : 'civil';
+    const elimIsMw = elimRole === 'mr-white';
+
+    // E8
+    const fl = g ? g.finalList || [] : [];
+    const fIdx = g ? g.finalIdx || 0 : 0;
+    const finalPhase = scr === 'end' && fIdx < fl.length;
+    const finalName = fl[fIdx] || '';
+    const causeMap = { elimination: 'Tous les infiltrés sont démasqués', 'mr-white': `Mr. White a trouvé le mot`, parite: 'Parité : autant de civils que d\u2019infiltrés', survie: `Les infiltrés ont survécu ${g ? g.turn : ''} tours` };
+    const board = g ? P.map(name => {
+      const role = g.roles[name];
+      const out = g.eliminated.indexOf(name);
+      let status = out >= 0 ? `Éliminé·e (${out + 1}ᵉ)` : 'En vie';
+      if (role === 'mr-white' && g.mwWins[name] === true) status += ' · a trouvé le mot';
+      else if (role === 'mr-white' && g.mwWins[name] === false) status += ' · n\u2019a pas trouvé';
+      return { name, role, word: role === 'civil' ? g.civilWord : role === 'imposteur' ? g.impWord : 'Aucun mot', status };
+    }) : [];
+
+    const back = { rules: 'home', players: 'home', settings: 'players' };
+    if (scr === 'elim' && !s.elimDone) back.elim = 'game';
+    const stepMap = { players: 'Étape 1 sur 2', settings: 'Étape 2 sur 2' };
+
+    return {
+      showTopbar: !isHome, showBack: !!back[scr], goBack: () => this.go(back[scr]),
+      showStep: !!stepMap[scr], stepLabel: stepMap[scr] || '',
+      showAbandon: ['dist', 'game'].includes(scr), askAbandon: () => this.setState({ abandonAsk: true }),
+      abandonAsk: !!s.abandonAsk, cancelAbandon: () => this.setState({ abandonAsk: false }),
+      abandon: () => this.go('players', { game: null }),
+      isHome, isRules: scr === 'rules', isPlayers: scr === 'players', isSettings: scr === 'settings', isDist: scr === 'dist',
+      isCard: scr === 'card', isGame: scr === 'game', isElim: scr === 'elim', isEnd: scr === 'end',
+
+      libCount: s.lib.groups.length, catCount: cats.length,
+      libSource: s.lib.source ? `Importée depuis ${s.lib.source}` : 'Bibliothèque d\u2019exemple intégrée',
+      hasReport: !!s.importReport,
+      reportLine: s.importReport ? (s.importReport.count ? `${s.importReport.count} groupes importés, ${s.importReport.errors.length} ligne${s.importReport.errors.length > 1 ? 's' : ''} ignorée${s.importReport.errors.length > 1 ? 's' : ''}` : 'Aucun groupe valide : la bibliothèque actuelle est conservée.') : '',
+      hasReportErrors: !!(s.importReport && s.importReport.errors.length),
+      reportErrors: s.importReport ? `Moins de 4 mots : ligne${s.importReport.errors.length > 1 ? 's' : ''} ${s.importReport.errors.slice(0, 12).join(', ')}${s.importReport.errors.length > 12 ? '…' : ''}` : '',
+      goPlayers: () => this.go('players'), goRules: () => this.go('rules'),
+      pickFile: () => this.fileRef.current && this.fileRef.current.click(), fileRef: this.fileRef, onFile: e => this.onFile(e),
+
+      playerCount: n, nameInput: s.nameInput, nameError: s.nameError, hasNameError: !!s.nameError,
+      onNameInput: e => this.setState({ nameInput: e.target.value, nameError: '' }),
+      onNameKey: e => { if (e.key === 'Enter') this.addName(); },
+      addName: () => this.addName(), addDisabled: !s.nameInput.trim() || n >= 20,
+      hasPlayers: n > 0, noPlayers: n === 0, playerRows, playersBlocked, playersMsg,
+      goSettings: () => this.go('settings'),
+
+      impCount: set.imp, mwCount: set.mw, civCount: Math.max(0, civ), infCount: inf,
+      maxInfLabel: `${maxInf} infiltré${maxInf > 1 ? 's' : ''} max`,
+      incImp: () => this.setSet({ imp: Math.min(set.imp + 1, Math.max(0, n - 1)) }), decImp: () => this.setSet({ imp: Math.max(0, set.imp - 1) }),
+      incMw: () => this.setSet({ mw: Math.min(set.mw + 1, Math.max(0, n - 1)) }), decMw: () => this.setSet({ mw: Math.max(0, set.mw - 1) }),
+      compoBad: !!compoMsg, compoMsg,
+      modeClassic: !tours, modeTours: tours,
+      classicBg: !tours ? 'var(--turquoise)' : 'var(--surface)', classicShadow: !tours ? 'var(--shadow-sticker)' : 'none',
+      toursBg: tours ? 'var(--turquoise)' : 'var(--surface)', toursShadow: tours ? 'var(--shadow-sticker)' : 'none',
+      setClassic: () => this.setSet({ mode: 'classic' }), setTours: () => this.setSet({ mode: 'tours' }),
+      nVal: this.nEff(), incN: () => this.setSet({ n: Math.min(30, this.nEff() + 1) }), decN: () => this.setSet({ n: Math.max(1, this.nEff() - 1) }),
+      catChips, launchBlocked, launchMsg: compoMsg || 'Choisis au moins une catégorie.',
+      launch: () => this.launch(),
+
+      seenCount, seenPct: n ? `${Math.round(seenCount / n * 100)}%` : '0%', distTiles, allSeen: n > 0 && seenCount === n,
+      startGame: () => this.go('game'),
+      reviewAsk: !!s.reviewAsk, reviewName: s.reviewAsk || '',
+      confirmReview: () => this.go('card', { cardPlayer: s.reviewAsk }), cancelReview: () => this.setState({ reviewAsk: null }),
+
+      cardName: s.cardPlayer || '',
+      cardWord: g && s.cardPlayer ? (g.roles[s.cardPlayer] === 'mr-white' ? '' : g.roles[s.cardPlayer] === 'imposteur' ? g.impWord : g.civilWord) : '',
+      onMemorized: () => { const who = s.cardPlayer; setTimeout(() => this.go('dist', { cardPlayer: null, game: { ...this.state.game, seen: { ...this.state.game.seen, [who]: true } } }), 320); },
+
+      turnKicker: tours ? `Tour · objectif ${this.nEff()}` : 'Tour', turnLabel: g ? (tours ? `${g.turn} / ${this.nEff()}` : `n° ${g.turn}`) : '',
+      starter: g ? g.starter : '', aliveCount: alive.length,
+      aliveTiles: alive.map(name => ({ name, onTap: () => this.go('elim', { elimTarget: name }) })),
+      hasDead: !!(g && g.eliminated.length), deadCount: g ? g.eliminated.length : 0,
+      deadTiles: g ? g.eliminated.map(name => ({ name, role: g.roles[name] })) : [],
+      nobody: () => this.concludeTurn(false),
+
+      elimName: s.elimTarget || '', elimChecked: !!s.elimChecked, checkBg: s.elimChecked ? 'var(--lemon)' : 'var(--surface)',
+      toggleElim: () => this.setState(st => ({ elimChecked: !st.elimChecked })),
+      confirmBlocked: !s.elimChecked,
+      confirmElim: () => { if (!s.elimChecked) return; this.setState(st => ({ elimDone: true, game: { ...st.game, eliminated: [...st.game.eliminated, st.elimTarget] } })); },
+      elimPending: !s.elimDone, elimDone: !!s.elimDone, elimRole,
+      elimVerdict: `${s.elimTarget || ''} était ${elimRole === 'civil' ? 'Civil' : elimRole === 'imposteur' ? 'Imposteur' : 'Mr. White'}`,
+      showMwInput: s.elimDone && elimIsMw && s.mwResult === null,
+      mwInput: s.mwInput, mwEmpty: !s.mwInput.trim(),
+      onMwInput: e => this.setState({ mwInput: e.target.value }),
+      onMwKey: e => { if (e.key === 'Enter') this.submitMwFn(); },
+      submitMw: () => this.submitMwFn(),
+      mwMissed: s.mwResult === false,
+      showContinue: s.elimDone && (!elimIsMw || s.mwResult === false),
+      continueElim: () => this.concludeTurn(false),
+
+      finalPhase, resultPhase: scr === 'end' && !finalPhase,
+      finalName, finalNum: fIdx + 1, finalTotal: fl.length,
+      finalAsking: finalPhase && s.finalAnswer === null, finalAnswered: finalPhase && s.finalAnswer !== null,
+      finalInput: s.finalInput, finalEmpty: !s.finalInput.trim(),
+      onFinalInput: e => this.setState({ finalInput: e.target.value }),
+      onFinalKey: e => { if (e.key === 'Enter') this.submitFinalFn(); },
+      submitFinal: () => this.submitFinalFn(),
+      finalFeedback: s.finalAnswer === true ? `Bien joué, ${finalName} : c'était bien le mot !` : `Raté : « ${s.finalInput} » n'est pas le mot des civils.`,
+      finalFbBg: s.finalAnswer === true ? 'var(--lemon-strong)' : 'var(--surface)',
+      nextFinalLabel: fIdx + 1 < fl.length ? 'Mr. White suivant' : 'Voir le résultat',
+      nextFinal: () => this.setState(st => ({ finalAnswer: null, finalInput: '', game: { ...st.game, finalIdx: (st.game.finalIdx || 0) + 1 } })),
+
+      winnerTitle: g && g.winner === 'civils' ? 'Les civils gagnent' : 'Les infiltrés gagnent',
+      winBg: g && g.winner === 'civils' ? 'var(--civil)' : 'var(--imposteur)',
+      causeText: g ? causeMap[g.cause] || '' : '',
+      civilWord: g ? g.civilWord : '', impWord: g ? g.impWord : '',
+      hasImpWord: !!(g && Object.values(g.roles).includes('imposteur')),
+      endCat: g ? g.cat : '', turnsPlayed: g ? `${g.turn} tour${g.turn > 1 ? 's' : ''}` : '',
+      board,
+      replay: () => this.launch(), newGame: () => this.go('players', { game: null })
+    };
+  }
+
+  submitMwFn() {
+    const s = this.state;
+    if (!s.mwInput.trim() || s.mwResult !== null) return;
+    const ok = accept(s.mwInput, s.game.civilWord);
+    const game = { ...s.game, mwWins: { ...s.game.mwWins, [s.elimTarget]: ok } };
+    if (ok) this.setState({ game }, () => this.concludeTurn(true));
+    else this.setState({ game, mwResult: false });
+  }
+  submitFinalFn() {
+    const s = this.state, g = s.game;
+    if (!s.finalInput.trim() || s.finalAnswer !== null) return;
+    const name = g.finalList[g.finalIdx || 0];
+    const ok = accept(s.finalInput, g.civilWord);
+    this.setState({ finalAnswer: ok, game: { ...g, mwWins: { ...g.mwWins, [name]: ok } } });
+  }
+}
+</script>
+</body>
+</html>
