@@ -80,8 +80,21 @@ export function E3({ onNavigate }: ScreenProps) {
     saveGameState({
       players,
       settings,
-      game: { cat: draw.cat, civilWord: draw.civilWord, imposteurWord: draw.imposteurWord, roles, starter, seen: {} },
+      game: {
+        cat: draw.cat,
+        civilWord: draw.civilWord,
+        imposteurWord: draw.imposteurWord,
+        roles,
+        starter,
+        seen: {},
+        turn: 1,
+        eliminated: [],
+        winner: null,
+        cause: null,
+        mrWhiteGuesses: {},
+      },
       cardPlayer: null,
+      elimTarget: null,
     });
     onNavigate("E4");
   }

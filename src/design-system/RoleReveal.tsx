@@ -52,7 +52,7 @@ function MrWhiteIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-const ROLE_LABEL: Record<Role, string> = {
+export const ROLE_LABEL: Record<Role, string> = {
   civil: "Civil",
   imposteur: "Imposteur",
   "mr-white": "Mr. White",

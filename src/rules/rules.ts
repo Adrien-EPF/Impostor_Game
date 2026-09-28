@@ -61,3 +61,81 @@ export function pickStarter(players: string[], roles: Record<string, Role>, elim
   const candidates = players.filter((p) => !eliminated.includes(p) && roles[p] !== "mr-white");
   return candidates.length > 0 ? candidates[randomInt(candidates.length)] : null;
 }
+
+export type Winner = "civils" | "infiltres";
+export type Cause = "elimination" | "mr-white" | "parite" | "survie";
+
+export interface VictoryResult {
+  winner: Winner;
+  cause: Cause;
+}
+
+export interface CheckVictoryInput {
+  alivePlayers: string[];
+  roles: Record<string, Role>;
+  turn: number;
+  /** Whether "Nombre de tours" is the active victory mode. */
+  toursMode: boolean;
+  /** The N target for "Nombre de tours" (`effectiveTours`); ignored when `toursMode` is false. */
+  toursTarget: number;
+  /** A Mr. White just guessed the civils' word correctly at their own elimination. */
+  mrWhiteGuessedCorrectly: boolean;
+}
+
+/**
+ * RG05, in order: (1) a correct Mr. White guess at elimination wins outright;
+ * (2) no infiltré left alive wins the civils; (3) Parité — civils vivants =
+ * infiltrés vivants (ADR-0002) — wins the infiltrés; (4) in "Nombre de
+ * tours" mode, surviving (≥1 infiltré alive) to the end of tour N wins the
+ * infiltrés; otherwise the game continues.
+ */
+export function checkVictory(input: CheckVictoryInput): VictoryResult | null {
+  const { alivePlayers, roles, turn, toursMode, toursTarget, mrWhiteGuessedCorrectly } = input;
+  if (mrWhiteGuessedCorrectly) return { winner: "infiltres", cause: "mr-white" };
+  const infiltresAlive = alivePlayers.filter((p) => roles[p] !== "civil").length;
+  const civilsAlive = alivePlayers.length - infiltresAlive;
+  if (infiltresAlive === 0) return { winner: "civils", cause: "elimination" };
+  if (civilsAlive <= infiltresAlive) return { winner: "infiltres", cause: "parite" };
+  if (toursMode && turn >= toursTarget) return { winner: "infiltres", cause: "survie" };
+  return null;
+}
+
+export interface TurnOutcome {
+  winner: Winner | null;
+  cause: Cause | null;
+  /** Unchanged when the game just ended; incremented otherwise. */
+  turn: number;
+  /** `null` when the game just ended (RG03 only draws a starter for a turn that's actually played). */
+  starter: string | null;
+}
+
+/** Resolves the end of a turn: either the game just ended (RG05), or the next turn's starter is drawn (RG03). */
+export function resolveTurn(
+  players: string[],
+  roles: Record<string, Role>,
+  eliminated: string[],
+  turn: number,
+  toursMode: boolean,
+  toursTarget: number,
+  mrWhiteGuessedCorrectly: boolean,
+): TurnOutcome {
+  const alivePlayers = players.filter((p) => !eliminated.includes(p));
+  const result = checkVictory({ alivePlayers, roles, turn, toursMode, toursTarget, mrWhiteGuessedCorrectly });
+  if (result) return { winner: result.winner, cause: result.cause, turn, starter: null };
+  return { winner: null, cause: null, turn: turn + 1, starter: pickStarter(players, roles, eliminated) };
+}
+
+/**
+ * RG09: the next living, never-eliminated Mr. White still owed a Chance
+ * finale attempt, in player order — or `null` once everyone's gone. A
+ * result already recorded in `mrWhiteGuesses` (win or miss, at elimination
+ * or an earlier finale attempt) marks that player as done.
+ */
+export function nextChanceFinale(
+  players: string[],
+  roles: Record<string, Role>,
+  eliminated: string[],
+  mrWhiteGuesses: Record<string, boolean>,
+): string | null {
+  return players.find((p) => roles[p] === "mr-white" && !eliminated.includes(p) && !(p in mrWhiteGuesses)) ?? null;
+}

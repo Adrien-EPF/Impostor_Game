@@ -6,7 +6,7 @@ import { loadGameState, saveGameState } from "../../state/gameState";
 import { E2 } from "./E2";
 
 function seedPlayers(players: string[]) {
-  saveGameState({ players, settings: DEFAULT_SETTINGS, game: null, cardPlayer: null });
+  saveGameState({ players, settings: DEFAULT_SETTINGS, game: null, cardPlayer: null, elimTarget: null });
 }
 
 function addPlayer(name: string) {

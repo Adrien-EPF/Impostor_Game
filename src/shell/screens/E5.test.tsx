@@ -10,6 +10,7 @@ function seedCard(cardPlayer: string) {
     players: ["Léa", "Hugo", "Inès"],
     settings: DEFAULT_SETTINGS,
     cardPlayer,
+    elimTarget: null,
     game: {
       cat: "Boissons",
       civilWord: "Coca",
@@ -17,6 +18,11 @@ function seedCard(cardPlayer: string) {
       roles: { Léa: "civil", Hugo: "imposteur", Inès: "mr-white" },
       starter: "Léa",
       seen: {},
+      turn: 1,
+      eliminated: [],
+      winner: null,
+      cause: null,
+      mrWhiteGuesses: {},
     },
   });
 }

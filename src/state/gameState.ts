@@ -1,12 +1,9 @@
-import type { Role } from "../rules";
+import type { Cause, Role, Winner } from "../rules";
 import { DEFAULT_SETTINGS } from "../settings";
 import type { Settings } from "../settings";
 import { createPersistedState, GAME_STATE_KEY } from "./persistedState";
 
-/**
- * The draw and its live progress through E4/E5. `turn`/`eliminated` are left
- * for the tickets that add E6/E7 — this one only needs turn 1's setup.
- */
+/** The draw and its live progress through E4-E8. */
 export interface Game {
   cat: string;
   civilWord: string;
@@ -15,12 +12,18 @@ export interface Game {
   starter: string | null;
   /** Players who have seen their secret card (E4 tile grid). */
   seen: Record<string, boolean>;
+  /** Current turn number, 1-indexed (RG03). */
+  turn: number;
+  /** Players eliminated so far, in elimination order (oldest first). */
+  eliminated: string[];
+  winner: Winner | null;
+  cause: Cause | null;
+  /** Per-Mr.-White guess outcome, recorded once — either at their own elimination (RG07) or during the Chance finale (RG09). */
+  mrWhiteGuesses: Record<string, boolean>;
 }
 
 /**
- * État de partie: shared across every in-progress-game screen ticket. Later
- * tickets extend the shape further (turn, éliminés, …) without changing how
- * it's read or written.
+ * État de partie: shared across every in-progress-game screen ticket.
  */
 export interface GameState {
   players: string[];
@@ -28,9 +31,17 @@ export interface GameState {
   game: Game | null;
   /** Player currently holding the phone on E5 (the "Touche ton prénom" pass-around), or `null` between turns. */
   cardPlayer: string | null;
+  /** Player targeted for elimination on E7, or `null` between votes. */
+  elimTarget: string | null;
 }
 
-const EMPTY_GAME_STATE: GameState = { players: [], settings: DEFAULT_SETTINGS, game: null, cardPlayer: null };
+const EMPTY_GAME_STATE: GameState = {
+  players: [],
+  settings: DEFAULT_SETTINGS,
+  game: null,
+  cardPlayer: null,
+  elimTarget: null,
+};
 
 const gameState = createPersistedState<GameState>(GAME_STATE_KEY);
 

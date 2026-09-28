@@ -6,5 +6,5 @@ export { Button } from "./Button";
 export type { ButtonProps } from "./Button";
 export { SecretCard } from "./SecretCard";
 export type { SecretCardProps } from "./SecretCard";
-export { RoleReveal } from "./RoleReveal";
+export { ROLE_LABEL, RoleReveal } from "./RoleReveal";
 export type { RoleRevealProps, Role } from "./RoleReveal";

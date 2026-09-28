@@ -1,2 +1,11 @@
-export { assignRoles, drawGroup, pickStarter, shuffle } from "./rules";
-export type { Role, WordDraw } from "./rules";
+export {
+  assignRoles,
+  checkVictory,
+  drawGroup,
+  nextChanceFinale,
+  pickStarter,
+  resolveTurn,
+  shuffle,
+} from "./rules";
+export type { CheckVictoryInput, Cause, Role, TurnOutcome, VictoryResult, Winner, WordDraw } from "./rules";
+export { matchesWord } from "./wordMatch";

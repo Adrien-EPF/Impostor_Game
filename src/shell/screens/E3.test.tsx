@@ -6,7 +6,7 @@ import { DEFAULT_SETTINGS } from "../../settings";
 import { E3 } from "./E3";
 
 function seed(players: string[]) {
-  saveGameState({ players, settings: DEFAULT_SETTINGS, game: null, cardPlayer: null });
+  saveGameState({ players, settings: DEFAULT_SETTINGS, game: null, cardPlayer: null, elimTarget: null });
 }
 
 function toursValue() {
