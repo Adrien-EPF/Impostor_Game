@@ -98,6 +98,61 @@ describe("E6", () => {
     expect(game.roles[game.starter!]).not.toBe("mr-white");
   });
 
+  it("hides the speech timer when disabled (default), so it neither appears nor affects layout (F19)", () => {
+    seed({ players: ["Léa", "Hugo", "Inès"], roles: { Léa: "civil", Hugo: "civil", Inès: "imposteur" } });
+    render(<E6 onNavigate={vi.fn()} />);
+    expect(screen.queryByRole("button", { name: "Démarrer le minuteur" })).not.toBeInTheDocument();
+  });
+
+  it("shows the speech timer when enabled, counts down, and signals expiry without blocking other E6 actions (F19)", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      seed({
+        players: ["Léa", "Hugo", "Inès"],
+        roles: { Léa: "civil", Hugo: "civil", Inès: "imposteur" },
+        settings: { ...DEFAULT_SETTINGS, timerEnabled: true, timerSeconds: 10 },
+      });
+      const onNavigate = vi.fn();
+      render(<E6 onNavigate={onNavigate} />);
+
+      expect(screen.getByText("0:10")).toBeInTheDocument();
+      await userEvent.click(screen.getByRole("button", { name: "Démarrer le minuteur" }));
+      await vi.advanceTimersByTimeAsync(3000);
+      expect(screen.getByText("0:07")).toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(7000);
+      expect(screen.getByText("Temps écoulé")).toBeInTheDocument();
+
+      // Expiry doesn't block the rest of E6: elimination still navigates normally.
+      await userEvent.click(screen.getByRole("button", { name: "Hugo" }));
+      expect(onNavigate).toHaveBeenCalledWith("E7");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("resets the speech timer to the configured duration on a new turn (F19)", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      seed({
+        players: ["Léa", "Hugo", "Inès"],
+        roles: { Léa: "civil", Hugo: "civil", Inès: "imposteur" },
+        settings: { ...DEFAULT_SETTINGS, timerEnabled: true, timerSeconds: 10 },
+      });
+      const onNavigate = vi.fn();
+      render(<E6 onNavigate={onNavigate} />);
+      await userEvent.click(screen.getByRole("button", { name: "Démarrer le minuteur" }));
+      await vi.advanceTimersByTimeAsync(4000);
+      expect(screen.getByText("0:06")).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: "Personne n'est éliminé" }));
+      expect(onNavigate).toHaveBeenCalledWith("E6");
+      expect(screen.getByText("0:10")).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("ending the game via 'Personne n'est éliminé' (0 infiltrés alive) navigates to E8 with a civils win", async () => {
     seed({
       players: ["Léa", "Hugo", "Inès"],

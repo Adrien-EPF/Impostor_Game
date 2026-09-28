@@ -33,7 +33,12 @@ export function App() {
 
   return (
     <>
-      {current !== "E1" && <TopBar onAbandon={current === "E6" ? () => setAbandonAsk(true) : undefined} />}
+      {current !== "E1" && (
+        <TopBar
+          onBack={current === "regles" ? () => navigate("E1") : undefined}
+          onAbandon={current === "E6" ? () => setAbandonAsk(true) : undefined}
+        />
+      )}
       {import.meta.env.DEV && (
         <nav aria-label="Sélecteur d'écran (dev)" style={{ display: "flex", flexWrap: "wrap", gap: 8, padding: 16 }}>
           {SCREEN_ORDER.map((id) => (

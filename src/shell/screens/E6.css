@@ -45,6 +45,37 @@
   overflow-wrap: anywhere;
 }
 
+.e6__timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 12px 12px 20px;
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+}
+
+.e6__timer--expired {
+  background: var(--danger);
+  color: var(--surface);
+  border-color: var(--danger);
+}
+
+.e6__timer-value {
+  min-width: 64px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+}
+
+.e6__timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .e6__section {
   display: flex;
   flex-direction: column;

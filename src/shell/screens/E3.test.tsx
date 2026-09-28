@@ -91,6 +91,60 @@ describe("E3", () => {
     expect(onNavigate).toHaveBeenCalledWith("E4");
   });
 
+  it("hides the duration stepper until the speech timer is enabled, off by default (F19)", async () => {
+    seed(["A", "B", "C", "D", "E", "F", "G", "H"]);
+    render(<E3 onNavigate={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Désactivé" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.queryByText("Durée (s)")).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Désactivé" }));
+    expect(screen.getByRole("button", { name: "Activé" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("Durée (s)")).toBeInTheDocument();
+    const row = screen.getByText("Durée (s)").closest(".e3__stepper-row") as HTMLElement;
+    expect(within(row).getByText("60")).toBeInTheDocument();
+  });
+
+  it("adjusts the speech timer duration by 10s steps (F19)", async () => {
+    seed(["A", "B", "C", "D", "E", "F", "G", "H"]);
+    render(<E3 onNavigate={vi.fn()} />);
+    await userEvent.click(screen.getByRole("button", { name: "Désactivé" }));
+    const row = () => screen.getByText("Durée (s)").closest(".e3__stepper-row") as HTMLElement;
+    await userEvent.click(within(row()).getByRole("button", { name: "Moins de secondes" }));
+    expect(within(row()).getByText("50")).toBeInTheDocument();
+    await userEvent.click(within(row()).getByRole("button", { name: "Plus de secondes" }));
+    await userEvent.click(within(row()).getByRole("button", { name: "Plus de secondes" }));
+    expect(within(row()).getByText("70")).toBeInTheDocument();
+  });
+
+  it("clamps the speech timer duration to [10, 300] (F19)", async () => {
+    seed(["A", "B", "C", "D", "E", "F", "G", "H"]);
+    saveGameState({
+      players: ["A", "B", "C", "D", "E", "F", "G", "H"],
+      settings: { ...DEFAULT_SETTINGS, timerEnabled: true, timerSeconds: 20 },
+      game: null,
+      cardPlayer: null,
+      elimTarget: null,
+    });
+    const first = render(<E3 onNavigate={vi.fn()} />);
+    const row = () => screen.getByText("Durée (s)").closest(".e3__stepper-row") as HTMLElement;
+    await userEvent.click(within(row()).getByRole("button", { name: "Moins de secondes" }));
+    await userEvent.click(within(row()).getByRole("button", { name: "Moins de secondes" }));
+    expect(within(row()).getByText("10")).toBeInTheDocument();
+    first.unmount();
+
+    saveGameState({
+      players: ["A", "B", "C", "D", "E", "F", "G", "H"],
+      settings: { ...DEFAULT_SETTINGS, timerEnabled: true, timerSeconds: 290 },
+      game: null,
+      cardPlayer: null,
+      elimTarget: null,
+    });
+    render(<E3 onNavigate={vi.fn()} />);
+    await userEvent.click(within(row()).getByRole("button", { name: "Plus de secondes" }));
+    await userEvent.click(within(row()).getByRole("button", { name: "Plus de secondes" }));
+    expect(within(row()).getByText("300")).toBeInTheDocument();
+  });
+
   it("remembers players/settings under the réglages key on 'Lancer la partie' (F16)", async () => {
     const players = ["A", "B", "C", "D", "E", "F", "G", "H"];
     seed(players);

@@ -2,7 +2,14 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { Button } from "../../design-system";
 import { loadLibrary } from "../../library";
-import { composition, effectiveTours, launchBlockedReason, toggleCategory } from "../../settings";
+import {
+  clampTimerSeconds,
+  composition,
+  effectiveTours,
+  launchBlockedReason,
+  TIMER_STEP_SECONDS,
+  toggleCategory,
+} from "../../settings";
 import type { Settings } from "../../settings";
 import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
 import { saveRememberedSettings } from "../../state/rememberedSettings";
@@ -158,7 +165,7 @@ export function E3({ onNavigate }: ScreenProps) {
               <span className="label">Tours (N)</span>
             </StepperRow>
           )}
-          <h2 className="heading e3__heading e3__heading--categories">Catégories</h2>
+          <h2 className="heading e3__heading e3__heading--spaced">Catégories</h2>
           <div className="e3__chips">
             {categories.map((cat) => {
               const on = !settings.excludedCategories.includes(cat);
@@ -181,6 +188,32 @@ export function E3({ onNavigate }: ScreenProps) {
               );
             })}
           </div>
+          <h2 className="heading e3__heading e3__heading--spaced">Minuteur de parole</h2>
+          <button
+            type="button"
+            aria-pressed={settings.timerEnabled}
+            aria-label={settings.timerEnabled ? "Activé" : "Désactivé"}
+            className={`e3__mode-tile${settings.timerEnabled ? " e3__mode-tile--active" : ""}`}
+            onClick={() => commitSettings({ ...settings, timerEnabled: !settings.timerEnabled })}
+          >
+            <span className="label">{settings.timerEnabled ? "Activé" : "Désactivé"}</span>
+            <span className="caption">Chronomètre optionnel pour limiter chaque prise de parole.</span>
+          </button>
+          {settings.timerEnabled && (
+            <StepperRow
+              value={settings.timerSeconds}
+              decLabel="Moins de secondes"
+              incLabel="Plus de secondes"
+              onDec={() =>
+                commitSettings({ ...settings, timerSeconds: clampTimerSeconds(settings.timerSeconds - TIMER_STEP_SECONDS) })
+              }
+              onInc={() =>
+                commitSettings({ ...settings, timerSeconds: clampTimerSeconds(settings.timerSeconds + TIMER_STEP_SECONDS) })
+              }
+            >
+              <span className="label">Durée (s)</span>
+            </StepperRow>
+          )}
         </section>
       </div>
       <div className="e3__launch">

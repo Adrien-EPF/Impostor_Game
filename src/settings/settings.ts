@@ -17,6 +17,10 @@ export interface Settings {
   tours: number | null;
   /** Categories excluded from the draw; a category absent from this list is included. */
   excludedCategories: string[];
+  /** F19: opt-in speech timer, off by default. */
+  timerEnabled: boolean;
+  /** Speech timer duration in seconds, clamped to [MIN_TIMER_SECONDS, MAX_TIMER_SECONDS]. */
+  timerSeconds: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -25,7 +29,18 @@ export const DEFAULT_SETTINGS: Settings = {
   mode: "classique",
   tours: null,
   excludedCategories: [],
+  timerEnabled: false,
+  timerSeconds: 60,
 };
+
+export const MIN_TIMER_SECONDS = 10;
+export const MAX_TIMER_SECONDS = 300;
+export const TIMER_STEP_SECONDS = 10;
+
+/** Clamps a speech timer duration to [MIN_TIMER_SECONDS, MAX_TIMER_SECONDS]. */
+export function clampTimerSeconds(seconds: number): number {
+  return Math.min(MAX_TIMER_SECONDS, Math.max(MIN_TIMER_SECONDS, seconds));
+}
 
 /** RG01: infiltrés max = ⌊(n−1)/2⌋. */
 export function maxInfiltres(playerCount: number): number {

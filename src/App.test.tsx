@@ -268,6 +268,14 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "Qui joue ?" })).toBeInTheDocument();
   });
 
+  it("shows 'Retour' on the Règles screen and navigates back to E1 (F20)", async () => {
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Règles" }));
+    expect(screen.getByRole("heading", { name: "Règles du jeu" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "‹ Retour" }));
+    expect(screen.getByRole("heading", { name: "Imposteur" })).toBeInTheDocument();
+  });
+
   it("cancelling the abandon modal keeps the game", async () => {
     saveGameState({
       players: ["Léa", "Hugo", "Inès"],

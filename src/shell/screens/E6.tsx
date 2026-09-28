@@ -1,10 +1,102 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, RoleReveal } from "../../design-system";
 import { resolveTurn } from "../../rules";
 import { effectiveTours } from "../../settings";
 import { applyTurnOutcome, loadGameState, saveGameState } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E6.css";
+
+/** Short beep signalling timer expiry. Silently no-ops where the Web Audio API is unavailable. */
+function playExpiryBeep() {
+  try {
+    const AudioContextCtor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextCtor) return;
+    const ctx = new AudioContextCtor();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.value = 880;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.4);
+    oscillator.onended = () => ctx.close();
+  } catch {
+    // Audible signal is a nice-to-have; the visual "Temps écoulé" state still stands.
+  }
+}
+
+function formatTimer(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+interface SpeechTimerProps {
+  /** Configured duration (settings.timerSeconds), in seconds. */
+  duration: number;
+  /** Changing this value (the turn number) resets the countdown to `duration` and pauses it. */
+  resetKey: number;
+}
+
+/** F19: opt-in speech timer shown on E6 when `settings.timerEnabled`. Purely local UI state — it never touches game state, so it can't interfere with elimination/tour actions. */
+function SpeechTimer({ duration, resetKey }: SpeechTimerProps) {
+  const [remaining, setRemaining] = useState(duration);
+  const [running, setRunning] = useState(false);
+  const beepedRef = useRef(false);
+
+  useEffect(() => {
+    setRemaining(duration);
+    setRunning(false);
+    beepedRef.current = false;
+  }, [duration, resetKey]);
+
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => {
+      setRemaining((r) => Math.max(0, r - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [running]);
+
+  useEffect(() => {
+    if (remaining === 0 && !beepedRef.current) {
+      beepedRef.current = true;
+      setRunning(false);
+      playExpiryBeep();
+    }
+  }, [remaining]);
+
+  const expired = remaining === 0;
+
+  return (
+    <div className={`e6__timer${expired ? " e6__timer--expired" : ""}`}>
+      <span className="label e6__timer-value">{expired ? "Temps écoulé" : formatTimer(remaining)}</span>
+      <div className="e6__timer-controls">
+        <Button
+          variant="secondary"
+          onClick={() => setRunning((r) => !r)}
+          disabled={expired}
+          aria-label={running ? "Mettre en pause le minuteur" : "Démarrer le minuteur"}
+        >
+          {running ? "Pause" : "Démarrer"}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setRemaining(duration);
+            setRunning(false);
+            beepedRef.current = false;
+          }}
+          aria-label="Réinitialiser le minuteur"
+        >
+          Réinitialiser
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 /** E6 ("Partie"): turn/starter banner, living players (tap to eliminate), éliminés, and "Personne n'est éliminé". */
 export function E6({ onNavigate }: ScreenProps) {
@@ -54,6 +146,7 @@ export function E6({ onNavigate }: ScreenProps) {
           <span className="e6__tile-value">{g.starter ?? "—"}</span>
         </div>
       </div>
+      {settings.timerEnabled && <SpeechTimer duration={settings.timerSeconds} resetKey={g.turn} />}
       <section className="e6__section">
         <div className="e6__section-header">
           <h2 className="heading">En jeu · {alive.length}</h2>

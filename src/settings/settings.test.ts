@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import type { WordGroup } from "../library";
 import {
   DEFAULT_SETTINGS,
+  MAX_TIMER_SECONDS,
+  MIN_TIMER_SECONDS,
   activeGroups,
+  clampTimerSeconds,
   composition,
   effectiveTours,
   launchBlockedReason,
@@ -15,6 +18,21 @@ const GROUPS: WordGroup[] = [
   { cat: "Animaux", words: ["Chat", "Tigre", "Lion", "Lynx"] },
   { cat: "Animaux", words: ["Dauphin", "Requin", "Baleine", "Orque"] },
 ];
+
+describe("DEFAULT_SETTINGS (F19)", () => {
+  it("has the speech timer off by default", () => {
+    expect(DEFAULT_SETTINGS.timerEnabled).toBe(false);
+    expect(DEFAULT_SETTINGS.timerSeconds).toBe(60);
+  });
+});
+
+describe("clampTimerSeconds", () => {
+  it("clamps to [MIN_TIMER_SECONDS, MAX_TIMER_SECONDS]", () => {
+    expect(clampTimerSeconds(MIN_TIMER_SECONDS - 10)).toBe(MIN_TIMER_SECONDS);
+    expect(clampTimerSeconds(MAX_TIMER_SECONDS + 10)).toBe(MAX_TIMER_SECONDS);
+    expect(clampTimerSeconds(90)).toBe(90);
+  });
+});
 
 describe("maxInfiltres", () => {
   it("is floor((n-1)/2)", () => {

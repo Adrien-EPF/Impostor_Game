@@ -1,6 +1,10 @@
 export {
   DEFAULT_SETTINGS,
+  MAX_TIMER_SECONDS,
+  MIN_TIMER_SECONDS,
+  TIMER_STEP_SECONDS,
   activeGroups,
+  clampTimerSeconds,
   composition,
   compositionError,
   effectiveTours,

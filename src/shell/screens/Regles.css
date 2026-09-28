@@ -1,0 +1,82 @@
+.regles {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.regles__title {
+  margin: 0;
+}
+
+.regles__roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-4);
+}
+
+.regles__role-card {
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.regles__role-pill {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.regles__role-pill--civil {
+  background: var(--civil);
+}
+
+.regles__role-pill--imposteur {
+  background: var(--imposteur);
+}
+
+.regles__role-pill--mr-white {
+  background: var(--mr-white);
+}
+
+.regles__role-text {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.regles__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: var(--space-6);
+}
+
+.regles__column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.regles__heading {
+  margin: 0;
+}
+
+.regles__list {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-wrap: pretty;
+}
