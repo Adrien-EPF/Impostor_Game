@@ -31,7 +31,7 @@ export function App() {
         </nav>
       )}
       <main style={{ flex: 1 }}>
-        <ScreenSwitcher current={current} />
+        <ScreenSwitcher current={current} onNavigate={setCurrent} />
       </main>
     </>
   );

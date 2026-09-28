@@ -10,7 +10,12 @@ import { E8 } from "./screens/E8";
 import { Regles } from "./screens/Regles";
 import type { ScreenId } from "./screens/types";
 
-const SCREENS: Record<ScreenId, ComponentType> = {
+export interface ScreenProps {
+  /** Navigates the app shell to another screen. */
+  onNavigate: (id: ScreenId) => void;
+}
+
+const SCREENS: Record<ScreenId, ComponentType<ScreenProps>> = {
   E1,
   E2,
   E3,
@@ -24,10 +29,11 @@ const SCREENS: Record<ScreenId, ComponentType> = {
 
 export interface ScreenSwitcherProps {
   current: ScreenId;
+  onNavigate: (id: ScreenId) => void;
 }
 
 /** Routes to the stub (later: real) screen matching `current`. */
-export function ScreenSwitcher({ current }: ScreenSwitcherProps) {
+export function ScreenSwitcher({ current, onNavigate }: ScreenSwitcherProps) {
   const Screen = SCREENS[current];
-  return <Screen />;
+  return <Screen onNavigate={onNavigate} />;
 }

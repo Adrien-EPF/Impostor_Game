@@ -1,0 +1,121 @@
+.e1 {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6);
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: var(--space-10);
+  align-items: center;
+}
+
+.e1__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.e1__pill {
+  display: inline-flex;
+  background: var(--lemon-strong);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 14px;
+  transform: rotate(-3deg);
+}
+
+.e1__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(56px, 8vw, 104px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.e1__tagline {
+  margin: 0;
+  max-width: 420px;
+  color: var(--ink-muted);
+}
+
+.e1__panel-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.e1__panel-col .btn {
+  width: 100%;
+}
+
+.e1__library {
+  background: var(--surface-tint);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.e1__library-label {
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.e1__library-count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.e1__library-count-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 52px;
+}
+
+.e1__library-source {
+  color: var(--ink-muted);
+}
+
+.e1__report {
+  margin-top: var(--space-2);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--lemon);
+  border: 2px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.e1__report-errors {
+  color: var(--danger);
+}
+
+.e1__actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.e1__file-input {
+  display: none;
+}
+
+.e1__hint {
+  color: var(--ink-muted);
+}
