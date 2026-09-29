@@ -76,9 +76,14 @@ export function compositionError(playerCount: number, settings: Settings): strin
   return null;
 }
 
-/** F03: N tours defaults to joueurs − 2 (min 1) until explicitly set. */
+/** N tours can't exceed joueurs − 2 (3 joueurs → 1 tour, 4 → 2…), min 1. */
+export function maxTours(playerCount: number): number {
+  return Math.max(1, playerCount - 2);
+}
+
+/** F03: N tours defaults to the max (joueurs − 2) until explicitly set, and never exceeds it. */
 export function effectiveTours(settings: Settings, playerCount: number): number {
-  return settings.tours ?? Math.max(1, playerCount - 2);
+  return Math.min(settings.tours ?? maxTours(playerCount), maxTours(playerCount));
 }
 
 export function toggleCategory(excludedCategories: string[], category: string): string[] {

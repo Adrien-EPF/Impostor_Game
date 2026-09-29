@@ -9,6 +9,8 @@ export interface TopBarProps {
   title?: string;
   /** Renders the "‹ Retour" pill when provided. */
   onBack?: () => void;
+  /** Makes the title a button that returns to the main menu when provided. */
+  onHome?: () => void;
   backLabel?: string;
   /** Renders the step pill (e.g. "Étape 1 sur 2") when provided. */
   stepLabel?: ReactNode;
@@ -20,6 +22,7 @@ export interface TopBarProps {
 export function TopBar({
   title = "Imposteur",
   onBack,
+  onHome,
   backLabel = "‹ Retour",
   stepLabel,
   onAbandon,
@@ -33,7 +36,13 @@ export function TopBar({
             {backLabel}
           </button>
         )}
-        <p className="top-bar__title">{title}</p>
+        {onHome ? (
+          <button type="button" className="top-bar__title top-bar__title--home" onClick={onHome}>
+            {title}
+          </button>
+        ) : (
+          <p className="top-bar__title">{title}</p>
+        )}
       </div>
       <div className="top-bar__side">
         {stepLabel && <span className="top-bar__step">{stepLabel}</span>}

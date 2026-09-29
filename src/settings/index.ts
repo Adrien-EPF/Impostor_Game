@@ -8,6 +8,7 @@ export {
   composition,
   compositionError,
   effectiveTours,
+  maxTours,
   launchBlockedReason,
   maxInfiltres,
   toggleCategory,

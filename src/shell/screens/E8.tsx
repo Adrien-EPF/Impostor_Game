@@ -164,6 +164,9 @@ export function E8({ onNavigate }: ScreenProps) {
         <Button variant="secondary" onClick={handleNewGame}>
           Nouvelle partie
         </Button>
+        <Button variant="secondary" onClick={() => onNavigate("E1")}>
+          Menu principal
+        </Button>
       </div>
     </section>
   );

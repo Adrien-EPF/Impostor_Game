@@ -78,3 +78,15 @@
   outline: 3px solid var(--turquoise-deep);
   outline-offset: 3px;
 }
+
+.top-bar__title--home {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.top-bar__title--home:focus-visible {
+  outline: 3px solid var(--turquoise-deep);
+  outline-offset: 3px;
+}

@@ -35,11 +35,12 @@ export function App() {
     <>
       {current !== "E1" && (
         <TopBar
-          onBack={current === "regles" ? () => navigate("E1") : undefined}
+          onBack={current === "regles" || current === "E2" ? () => navigate("E1") : undefined}
+          onHome={() => navigate("E1")}
           onAbandon={current === "E6" ? () => setAbandonAsk(true) : undefined}
         />
       )}
-      {import.meta.env.DEV && (
+      {import.meta.env.DEV && new URLSearchParams(window.location.search).has("dev") && (
         <nav aria-label="Sélecteur d'écran (dev)" className="app__dev-nav">
           {SCREEN_ORDER.map((id) => (
             <button

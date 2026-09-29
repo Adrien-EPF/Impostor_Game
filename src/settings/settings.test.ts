@@ -8,6 +8,7 @@ import {
   clampTimerSeconds,
   composition,
   effectiveTours,
+  maxTours,
   launchBlockedReason,
   maxInfiltres,
   toggleCategory,
@@ -92,6 +93,12 @@ describe("effectiveTours", () => {
 
   it("uses the explicit value once set", () => {
     expect(effectiveTours({ ...DEFAULT_SETTINGS, tours: 4 }, 8)).toBe(4);
+  });
+
+  it("never exceeds joueurs - 2 (3 joueurs -> 1 tour, 4 -> 2)", () => {
+    expect(maxTours(3)).toBe(1);
+    expect(maxTours(4)).toBe(2);
+    expect(effectiveTours({ ...DEFAULT_SETTINGS, tours: 9 }, 4)).toBe(2);
   });
 });
 

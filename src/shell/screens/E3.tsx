@@ -7,6 +7,7 @@ import {
   composition,
   effectiveTours,
   launchBlockedReason,
+  maxTours,
   TIMER_STEP_SECONDS,
   toggleCategory,
 } from "../../settings";
@@ -160,7 +161,7 @@ export function E3({ onNavigate }: ScreenProps) {
               decLabel="Moins de tours"
               incLabel="Plus de tours"
               onDec={() => commitSettings({ ...settings, tours: Math.max(1, nVal - 1) })}
-              onInc={() => commitSettings({ ...settings, tours: nVal + 1 })}
+              onInc={() => commitSettings({ ...settings, tours: Math.min(maxTours(playerCount), nVal + 1) })}
             >
               <span className="label">Tours (N)</span>
             </StepperRow>

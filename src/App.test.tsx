@@ -9,6 +9,8 @@ import { App } from "./App";
 describe("App", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    // The dev screen picker only renders with ?dev in the URL.
+    window.history.pushState({}, "", "/?dev");
   });
 
   it("starts on the E1 screen without a top bar", () => {
@@ -22,6 +24,16 @@ describe("App", () => {
     await userEvent.click(screen.getByRole("button", { name: "E2" }));
     expect(screen.getByRole("heading", { name: "Qui joue ?" })).toBeInTheDocument();
     expect(screen.getByRole("banner")).toBeInTheDocument();
+  });
+
+  it("shows a Retour button on E2 and the title returns to E1 from any screen", async () => {
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "E2" }));
+    await userEvent.click(screen.getByRole("button", { name: /Retour/ }));
+    expect(screen.getByRole("heading", { name: "Imposteur" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "E3" }));
+    await userEvent.click(screen.getByRole("button", { name: "Imposteur" }));
+    expect(screen.queryByRole("banner")).not.toBeInTheDocument();
   });
 
   it("hides the top bar again when navigating back to E1", async () => {
