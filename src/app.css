@@ -1,3 +1,46 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__dev-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-tint);
+  border-bottom: 2px solid var(--surface-tint);
+  font-size: 12px;
+}
+
+.app__dev-nav button {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
 .app__modal-backdrop {
   position: fixed;
   inset: 0;

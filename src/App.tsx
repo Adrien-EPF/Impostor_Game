@@ -40,7 +40,7 @@ export function App() {
         />
       )}
       {import.meta.env.DEV && (
-        <nav aria-label="Sélecteur d'écran (dev)" style={{ display: "flex", flexWrap: "wrap", gap: 8, padding: 16 }}>
+        <nav aria-label="Sélecteur d'écran (dev)" className="app__dev-nav">
           {SCREEN_ORDER.map((id) => (
             <button
               key={id}
@@ -53,7 +53,7 @@ export function App() {
           ))}
         </nav>
       )}
-      <main style={{ flex: 1 }}>
+      <main className="app__main">
         <ScreenSwitcher current={current} onNavigate={navigate} />
       </main>
       {abandonAsk && (
