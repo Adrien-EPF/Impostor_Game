@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, RoleReveal } from "../../design-system";
 import { matchesWord, nextChanceFinale } from "../../rules";
-import type { Cause } from "../../rules";
+import type { Cause, Winner } from "../../rules";
 import { loadLibrary } from "../../library";
 import { buildNewGame, loadGameState, saveGameState } from "../../state/gameState";
 import { loadRememberedSettings } from "../../state/rememberedSettings";
@@ -15,6 +15,12 @@ const CAUSE_TEXT: Record<Cause, (turn: number) => string> = {
   survie: (turn) => `Les infiltrés ont survécu ${turn} tours`,
 };
 
+const BANNER_TITLE: Record<Winner, string> = {
+  civils: "Les civils gagnent",
+  infiltres: "Les infiltrés gagnent",
+  "mr-white": "Mr. White gagne seul",
+};
+
 /** E8 ("Fin de partie"): Chance finale (RG09) for surviving Mr. Whites, then the results banner and board. */
 export function E8({ onNavigate }: ScreenProps) {
   const [state, setState] = useState(() => loadGameState());
@@ -25,7 +31,7 @@ export function E8({ onNavigate }: ScreenProps) {
   // doesn't itself advance the displayed player out from under the result
   // being shown — only "Mr. White suivant"/"Voir le résultat" does that.
   const [current, setCurrent] = useState<string | null>(() =>
-    state.game ? nextChanceFinale(state.players, state.game.roles, state.game.eliminated, state.game.mrWhiteGuesses) : null,
+    state.game && state.game.cause !== "mr-white" ? nextChanceFinale(state.players, state.game.roles, state.game.eliminated, state.game.mrWhiteGuesses) : null,
   );
   if (!state.game || !state.game.winner || !state.game.cause) return null;
   // Aliased so closures below keep the non-null narrowing (TS doesn't carry
@@ -128,7 +134,7 @@ export function E8({ onNavigate }: ScreenProps) {
     <section className="e8">
       <div className={`e8__banner e8__banner--${g.winner}`}>
         <span className="label e8__banner-kicker">{CAUSE_TEXT[g.cause!](g.turn)}</span>
-        <h1 className="e8__banner-title">{g.winner === "civils" ? "Les civils gagnent" : "Les infiltrés gagnent"}</h1>
+        <h1 className="e8__banner-title">{BANNER_TITLE[g.winner!]}</h1>
       </div>
       <div className="e8__stats">
         <div className="e8__stat">

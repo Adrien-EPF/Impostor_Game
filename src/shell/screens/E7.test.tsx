@@ -43,12 +43,22 @@ describe("E7 — base (non-Mr.-White) path", () => {
     window.localStorage.clear();
   });
 
-  it("shows the pre-confirmation checkbox card with the button disabled until checked, and no cancel button", () => {
+  it("shows the pre-confirmation checkbox card with the button disabled until checked, and a cancel button", () => {
     seed({ players: ["Léa", "Hugo", "Inès"], roles: { Léa: "civil", Hugo: "civil", Inès: "civil" }, elimTarget: "Hugo" });
     render(<E7 onNavigate={vi.fn()} />);
     expect(screen.getByText("Hugo", { selector: ".e7__name" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Confirmer l'élimination" })).toBeDisabled();
-    expect(screen.queryByRole("button", { name: /annuler/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Annuler" })).toBeEnabled();
+  });
+
+  it("cancelling before confirming returns to the round without eliminating anyone", async () => {
+    seed({ players: ["Léa", "Hugo", "Inès"], roles: { Léa: "civil", Hugo: "civil", Inès: "civil" }, elimTarget: "Hugo" });
+    const onNavigate = vi.fn();
+    render(<E7 onNavigate={onNavigate} />);
+    await userEvent.click(screen.getByRole("button", { name: "Annuler" }));
+    expect(onNavigate).toHaveBeenCalledWith("E6");
+    expect(loadGameState().game?.eliminated).toEqual([]);
+    expect(loadGameState().elimTarget).toBeNull();
   });
 
   it("confirming persists the elimination immediately and reveals the role, with no cancel afterwards either", async () => {
@@ -124,7 +134,7 @@ describe("E7 — Mr. White path", () => {
     await userEvent.click(screen.getByRole("button", { name: "Valider le mot" }));
     expect(onNavigate).toHaveBeenCalledWith("E8");
     const game = loadGameState().game!;
-    expect(game.winner).toBe("infiltres");
+    expect(game.winner).toBe("mr-white");
     expect(game.cause).toBe("mr-white");
     expect(game.mrWhiteGuesses.Inès).toBe(true);
   });

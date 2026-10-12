@@ -168,3 +168,24 @@ describe("E8 — Chance finale (RG09)", () => {
     expect(game.winner).toBe("infiltres");
   });
 });
+
+describe("E8 — Mr. White wins alone", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("shows a Mr. White-only victory (not the infiltrés) and skips the Chance finale", () => {
+    seed({
+      players: ["Léa", "Hugo", "Inès", "Max"],
+      roles: { Léa: "civil", Hugo: "civil", Inès: "mr-white", Max: "mr-white" },
+      eliminated: ["Inès"],
+      winner: "mr-white",
+      cause: "mr-white",
+      civilWord: "Coca",
+    });
+    render(<E8 onNavigate={vi.fn()} />);
+    expect(screen.getByText("Mr. White gagne seul")).toBeInTheDocument();
+    expect(screen.queryByText("Les infiltrés gagnent")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Chance finale/)).not.toBeInTheDocument();
+  });
+});

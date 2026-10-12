@@ -78,6 +78,10 @@
   background: var(--civil);
 }
 
+.e8__banner--mr-white {
+  background: var(--mr-white);
+}
+
 .e8__banner--infiltres {
   background: var(--imposteur);
 }

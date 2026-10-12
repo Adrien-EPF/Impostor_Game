@@ -40,12 +40,14 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 12px 12px 20px;
+  min-width: 0;
   background: var(--surface-tint);
   border: 2px solid var(--ink);
   border-radius: var(--radius-lg);
 }
 
 .e3__stepper-label {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -174,4 +176,23 @@
 .e3__launch-msg {
   color: var(--ink-muted);
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .e3__stepper-row {
+    gap: 8px;
+    padding: 12px 12px 12px 14px;
+  }
+
+  .e3__stepper-label {
+    gap: 8px;
+  }
+
+  .e3__stepper-controls {
+    gap: 6px;
+  }
+
+  .e3__stepper-value {
+    min-width: 28px;
+  }
 }

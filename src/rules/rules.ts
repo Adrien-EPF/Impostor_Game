@@ -62,7 +62,7 @@ export function pickStarter(players: string[], roles: Record<string, Role>, elim
   return candidates.length > 0 ? candidates[randomInt(candidates.length)] : null;
 }
 
-export type Winner = "civils" | "infiltres";
+export type Winner = "civils" | "infiltres" | "mr-white";
 export type Cause = "elimination" | "mr-white" | "parite" | "survie";
 
 export interface VictoryResult {
@@ -83,7 +83,7 @@ export interface CheckVictoryInput {
 }
 
 /**
- * RG05, in order: (1) a correct Mr. White guess at elimination wins outright;
+ * RG05, in order: (1) a correct Mr. White guess at elimination wins outright, for Mr. White alone (not the infiltrés);
  * (2) no infiltré left alive wins the civils; (3) Parité — civils vivants =
  * infiltrés vivants (ADR-0002) — wins the infiltrés; (4) in "Nombre de
  * tours" mode, surviving (≥1 infiltré alive) to the end of tour N wins the
@@ -91,7 +91,7 @@ export interface CheckVictoryInput {
  */
 export function checkVictory(input: CheckVictoryInput): VictoryResult | null {
   const { alivePlayers, roles, turn, toursMode, toursTarget, mrWhiteGuessedCorrectly } = input;
-  if (mrWhiteGuessedCorrectly) return { winner: "infiltres", cause: "mr-white" };
+  if (mrWhiteGuessedCorrectly) return { winner: "mr-white", cause: "mr-white" };
   const infiltresAlive = alivePlayers.filter((p) => roles[p] !== "civil").length;
   const civilsAlive = alivePlayers.length - infiltresAlive;
   if (infiltresAlive === 0) return { winner: "civils", cause: "elimination" };

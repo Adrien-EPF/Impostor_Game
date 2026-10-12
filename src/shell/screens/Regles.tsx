@@ -60,6 +60,9 @@ export function Regles() {
               <b>Mode Nombre de tours</b> : les infiltrés gagnent aussi si l'un d'eux survit jusqu'à la fin du tour N.
             </li>
             <li>
+              <b>Mr. White seul</b> : s'il est éliminé et devine le mot des civils, il gagne seul, sans les imposteurs.
+            </li>
+            <li>
               <b>Chance finale</b> : quand les infiltrés gagnent, chaque Mr. White encore en vie tente de deviner le
               mot des civils, pour l'honneur.
             </li>

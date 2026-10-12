@@ -106,7 +106,7 @@ describe("checkVictory (RG05)", () => {
     const roles: Record<string, Role> = { A: "civil", B: "civil", C: "civil", D: "mr-white" };
     expect(
       checkVictory({ ...BASE_CHECK, alivePlayers: ["A", "B", "C", "D"], roles, mrWhiteGuessedCorrectly: true }),
-    ).toEqual({ winner: "infiltres", cause: "mr-white" });
+    ).toEqual({ winner: "mr-white", cause: "mr-white" });
   });
 
   it("in 'Nombre de tours' mode, an infiltré alive after turn >= N wins by survie", () => {

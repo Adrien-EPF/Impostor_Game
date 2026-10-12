@@ -7,7 +7,7 @@ import type { Game } from "../../state/gameState";
 import type { ScreenProps } from "../ScreenSwitcher";
 import "./E7.css";
 
-/** E7 ("Élimination"): confirm (no cancel, ADR-0001), reveal the role, and — for Mr. White — the one-shot guess (RG07). */
+/** E7 ("Élimination"): confirm (cancellable only before confirming, ADR-0001), reveal the role, and — for Mr. White — the one-shot guess (RG07). */
 export function E7({ onNavigate }: ScreenProps) {
   const [state, setState] = useState(() => loadGameState());
   const [checked, setChecked] = useState(false);
@@ -39,6 +39,12 @@ export function E7({ onNavigate }: ScreenProps) {
   function handleConfirm() {
     if (!checked) return;
     persist({ ...g, eliminated: [...g.eliminated, target] });
+  }
+
+  /** Backs out of a vote before it is confirmed (ADR-0001 only forbids undoing a confirmed elimination). */
+  function handleCancel() {
+    persist(g, { elimTarget: null });
+    onNavigate("E6");
   }
 
   function handleGuessSubmit() {
@@ -91,6 +97,9 @@ export function E7({ onNavigate }: ScreenProps) {
           </label>
           <Button variant="danger" onClick={handleConfirm} disabled={!checked}>
             Confirmer l'élimination
+          </Button>
+          <Button variant="secondary" onClick={handleCancel}>
+            Annuler
           </Button>
         </div>
       )}
