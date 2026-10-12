@@ -11,8 +11,8 @@ export interface ParseCsvResult {
   errors: number[];
 }
 
-const MAX_WORD_COLUMNS = 6;
-const MIN_WORDS_PER_GROUP = 4;
+export const MAX_WORD_COLUMNS = 6;
+export const MIN_WORDS_PER_GROUP = 4;
 
 /**
  * Parses the "Bibliothèque de mots" CSV format: `;` or `,` separated,

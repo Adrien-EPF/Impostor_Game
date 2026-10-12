@@ -2,10 +2,7 @@ import { describe, expect, it } from "vitest";
 import csvText from "../../mots_imposteur.csv?raw";
 import { DEFAULT_LIB } from "./defaultLibrary";
 import { normalizeWord } from "./normalize";
-import { parseCSV } from "./parseCsv";
-
-const MIN_WORDS = 4;
-const MAX_WORDS = 6;
+import { MAX_WORD_COLUMNS, MIN_WORDS_PER_GROUP, parseCSV } from "./parseCsv";
 
 /** Non-empty word cells of each data row, straight from the file (before parseCSV merges duplicates). */
 function rawWordRows(): string[][] {
@@ -36,8 +33,8 @@ describe("DEFAULT_LIB", () => {
   it("gives every group a category and 4 to 6 words", () => {
     for (const group of DEFAULT_LIB) {
       expect(group.cat.length).toBeGreaterThan(0);
-      expect(group.words.length).toBeGreaterThanOrEqual(MIN_WORDS);
-      expect(group.words.length).toBeLessThanOrEqual(MAX_WORDS);
+      expect(group.words.length).toBeGreaterThanOrEqual(MIN_WORDS_PER_GROUP);
+      expect(group.words.length).toBeLessThanOrEqual(MAX_WORD_COLUMNS);
     }
   });
 
@@ -48,13 +45,24 @@ describe("DEFAULT_LIB", () => {
   });
 
   it("never repeats a word across groups", () => {
-    const seen = new Map<string, string>();
+    const seen = new Map<string, string[]>();
     for (const group of DEFAULT_LIB) {
       for (const word of group.words) {
         const key = normalizeWord(word);
-        expect(seen.get(key), `"${word}" already used in group "${seen.get(key)}"`).toBeUndefined();
-        seen.set(key, group.cat);
+        expect(seen.get(key), `"${word}" already used in the group [${seen.get(key)?.join(", ")}]`).toBeUndefined();
+        seen.set(key, group.words);
       }
+    }
+  });
+
+  it("never puts a word inside another word of the same group", () => {
+    for (const group of DEFAULT_LIB) {
+      const keys = group.words.map(normalizeWord);
+      keys.forEach((key, i) => {
+        keys.forEach((other, j) => {
+          expect(i === j || !other.includes(key), `"${group.words[i]}" is contained in "${group.words[j]}"`).toBe(true);
+        });
+      });
     }
   });
 });
