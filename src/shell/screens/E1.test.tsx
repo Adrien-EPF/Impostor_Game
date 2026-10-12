@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LIBRARY_KEY, loadLibrary } from "../../library";
+import { DEFAULT_LIB, LIBRARY_KEY, loadLibrary } from "../../library";
 import { DEFAULT_SETTINGS } from "../../settings";
 import { loadGameState, saveGameState } from "../../state/gameState";
 import { saveRememberedSettings } from "../../state/rememberedSettings";
@@ -22,9 +22,9 @@ describe("E1", () => {
     window.localStorage.clear();
   });
 
-  it("shows the default library (12 groups) with no import", () => {
+  it("shows the default library with no import", () => {
     render(<E1 onNavigate={vi.fn()} />);
-    expect(screen.getByText("12")).toBeInTheDocument();
+    expect(screen.getByText(String(DEFAULT_LIB.length))).toBeInTheDocument();
     expect(screen.getByText(/groupes · \d+ catégories/)).toBeInTheDocument();
     expect(screen.getByText("Bibliothèque d’exemple intégrée")).toBeInTheDocument();
   });
@@ -109,7 +109,7 @@ describe("E1", () => {
     expect(
       await screen.findByText("Aucun groupe valide : la bibliothèque actuelle est conservée."),
     ).toBeInTheDocument();
-    expect(screen.getByText("12")).toBeInTheDocument();
+    expect(screen.getByText(String(DEFAULT_LIB.length))).toBeInTheDocument();
     expect(screen.getByText("Bibliothèque d’exemple intégrée")).toBeInTheDocument();
     expect(window.localStorage.getItem(LIBRARY_KEY)).toBeNull();
   });

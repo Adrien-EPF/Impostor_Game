@@ -90,6 +90,24 @@ Contrôles à l'import (F04) :
 - Résumé affiché : X groupes importés, Y lignes ignorées.
 - La bibliothèque importée est conservée dans le navigateur ; un nouvel import la remplace.
 
+Bibliothèque par défaut : `mots_imposteur.csv` (à la racine du dépôt) est aussi la **source unique** de la bibliothèque proposée tant que le joueur n'a rien importé. Pour ajouter des mots à la bibliothèque par défaut, on édite ce fichier et nulle part ailleurs.
+
+### Qualité d'un groupe de mots
+
+Un groupe ajouté au fichier respecte ces règles :
+
+1. **4 à 6 mots de même niveau de généralité** (pas « Chat » avec « Félin »).
+2. **Aucun mot contenu dans un autre** (pas « Tarte » avec « Tarte flambée »).
+3. **Mots connus de la plupart des joueurs francophones**, tout public. Les franchises très connues (Star Wars, Harry Potter…) sont acceptées, y compris récentes si elles sont vraiment connues.
+4. **Assez proches pour qu'un Imposteur passe inaperçu à l'oral**, mais pas synonymes parfaits.
+5. **Pas de mot répété entre deux groupes de la même catégorie.**
+
+Règles complémentaires :
+
+- Aucun mot ne figure dans deux groupes différents de la bibliothèque (contrôlé par un test).
+- Une catégorie peut regrouper plusieurs groupes (« Animaux » ×2), mais on évite les sous-catégories déguisées (pas de « Félins » à côté d'« Animaux »).
+- Les franchises se déclinent en deux catégories séparées : personnages d'une même franchise, et franchises entre elles.
+
 ## Exigences techniques
 
 - **Technologie** : HTML, CSS et JavaScript (ou TypeScript), sans serveur ; lancement en ouvrant un fichier ou via un petit serveur local.

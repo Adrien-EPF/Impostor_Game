@@ -1,15 +1,60 @@
 import { describe, expect, it } from "vitest";
+import csvText from "../../mots_imposteur.csv?raw";
 import { DEFAULT_LIB } from "./defaultLibrary";
+import { normalizeWord } from "./normalize";
+import { parseCSV } from "./parseCsv";
+
+const MIN_WORDS = 4;
+const MAX_WORDS = 6;
+
+/** Non-empty word cells of each data row, straight from the file (before parseCSV merges duplicates). */
+function rawWordRows(): string[][] {
+  return csvText
+    .replace(/^﻿/, "")
+    .split(/\r?\n/)
+    .slice(1)
+    .filter((line) => line.trim())
+    .map((line) =>
+      line
+        .split(";")
+        .slice(1)
+        .map((cell) => cell.trim())
+        .filter(Boolean),
+    );
+}
 
 describe("DEFAULT_LIB", () => {
-  it("has 12 groups", () => {
-    expect(DEFAULT_LIB).toHaveLength(12);
+  it("is built from mots_imposteur.csv, the single source of the default library", () => {
+    expect(DEFAULT_LIB.length).toBeGreaterThan(0);
+    expect(DEFAULT_LIB).toEqual(parseCSV(csvText).groups);
   });
 
-  it("gives every group a category and at least 4 words", () => {
+  it("imports every row of the CSV without ignoring any", () => {
+    expect(parseCSV(csvText).errors).toEqual([]);
+  });
+
+  it("gives every group a category and 4 to 6 words", () => {
     for (const group of DEFAULT_LIB) {
       expect(group.cat.length).toBeGreaterThan(0);
-      expect(group.words.length).toBeGreaterThanOrEqual(4);
+      expect(group.words.length).toBeGreaterThanOrEqual(MIN_WORDS);
+      expect(group.words.length).toBeLessThanOrEqual(MAX_WORDS);
+    }
+  });
+
+  it("never repeats a word within a group", () => {
+    for (const words of rawWordRows()) {
+      expect(new Set(words.map(normalizeWord)).size).toBe(words.length);
+    }
+  });
+
+  it("never repeats a word across groups", () => {
+    const seen = new Map<string, string>();
+    for (const group of DEFAULT_LIB) {
+      for (const word of group.words) {
+        const key = normalizeWord(word);
+        expect(seen.get(key), `"${word}" already used in group "${seen.get(key)}"`).toBeUndefined();
+        seen.set(key, group.cat);
+      }
     }
   });
 });

@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_LIB } from "../../library";
 import { saveGameState } from "../../state/gameState";
 import { loadRememberedSettings } from "../../state/rememberedSettings";
 import { DEFAULT_SETTINGS } from "../../settings";
@@ -66,7 +67,7 @@ describe("E3", () => {
   it("disables 'Lancer la partie' with the exact message when every category is deselected", async () => {
     seed(["A", "B", "C", "D", "E", "F", "G", "H"]);
     render(<E3 onNavigate={vi.fn()} />);
-    const categories = ["Boissons", "Animaux", "Sports", "Cuisine", "Lieux", "Musique", "Transports", "Métiers", "Objets"];
+    const categories = [...new Set(DEFAULT_LIB.map((group) => group.cat))];
     for (const cat of categories) {
       await userEvent.click(screen.getByRole("button", { name: cat }));
     }

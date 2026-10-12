@@ -1,7 +1,15 @@
 ﻿categorie;mot1;mot2;mot3;mot4;mot5;mot6
 Boissons;Coca;Fanta;Orangina;Iced Tea;RedBull;
 Animaux;Chat;Tigre;Lion;Lynx;Guépard;Panthère
+Animaux;Dauphin;Requin;Baleine;Orque;Phoque;
 Fruits;Pomme;Poire;Coing;Pêche;;
-Sports;Tennis;Badminton;Squash;Ping-pong;Padel;
+Sports;Tennis;Ping-pong;Badminton;Squash;Padel;
+Cuisine;Crêpe;Gaufre;Pancake;Beignet;Churros;
+Cuisine;Pizza;Tarte flambée;Quiche;Focaccia;;
+Lieux;Plage;Piscine;Lac;Rivière;Mer;
+Lieux;Cinéma;Théâtre;Opéra;Cirque;Concert;
+Musique;Guitare;Violon;Ukulélé;Banjo;Harpe;
+Transports;Vélo;Trottinette;Skate;Roller;Moto;
+Métiers;Pompier;Policier;Gendarme;Militaire;Douanier;
 Métiers;Médecin;Infirmier;Pharmacien;Dentiste;Kiné;
-Lieux;Plage;Piscine;Lac;Rivière;;
+Objets;Parapluie;Parasol;Chapeau;Casquette;Capuche;

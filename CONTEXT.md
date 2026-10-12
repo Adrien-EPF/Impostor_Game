@@ -22,7 +22,7 @@ _Avoid_: ne pas confondre avec "Imposteur" employé seul — un imposteur n'est 
 ### Déroulement
 
 **Groupe (de mots)**:
-Ensemble de 4 à 6 mots proches dans la bibliothèque CSV, dont sont tirés le mot des civils et le mot des infiltrés pour une partie.
+Ensemble de 4 à 6 mots proches dans la bibliothèque CSV, dont sont tirés le mot des civils et le mot des infiltrés pour une partie. Le fichier `mots_imposteur.csv` est aussi la source unique de la bibliothèque par défaut. Règles de qualité d'un groupe : voir le cahier des charges, section « Fichier de mots ».
 
 **Tour**:
 Unité de déroulement du jeu ; se termine par une élimination ou par "Personne n'est éliminé". Les conditions de victoire sont vérifiées après chaque tour.
