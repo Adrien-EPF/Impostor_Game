@@ -1,15 +1,30 @@
 ﻿categorie;mot1;mot2;mot3;mot4;mot5;mot6
 Boissons;Coca;Fanta;Orangina;Iced Tea;RedBull;
+Boissons;Café;Thé;Chocolat chaud;Tisane;Lait;
+Boissons;Jus d'orange;Jus de pomme;Jus d'ananas;Jus de raisin;;
+Boissons;Bière;Cidre;Vin;Champagne;Whisky;
 Animaux;Chat;Tigre;Lion;Lynx;Guépard;Panthère
 Animaux;Dauphin;Requin;Baleine;Orque;Phoque;
-Fruits;Pomme;Poire;Coing;Pêche;;
-Sports;Tennis;Ping-pong;Badminton;Squash;Padel;
+Animaux;Chien;Loup;Renard;Chacal;Coyote;
+Animaux;Aigle;Faucon;Vautour;Condor;Hibou;
+Animaux;Vache;Mouton;Chèvre;Cochon;Cheval;
 Cuisine;Crêpe;Gaufre;Pancake;Beignet;Churros;
 Cuisine;Pizza;Tarte flambée;Quiche;Focaccia;;
+Cuisine;Pomme;Poire;Coing;Pêche;;
+Cuisine;Fraise;Framboise;Cerise;Myrtille;Groseille;
+Cuisine;Spaghetti;Tagliatelle;Penne;Macaroni;Lasagne;
+Cuisine;Camembert;Brie;Roquefort;Comté;Emmental;
 Lieux;Plage;Piscine;Lac;Rivière;Mer;
 Lieux;Cinéma;Théâtre;Opéra;Cirque;Concert;
-Musique;Guitare;Violon;Ukulélé;Banjo;Harpe;
-Transports;Vélo;Trottinette;Skate;Roller;Moto;
+Lieux;École;Collège;Lycée;Université;Crèche;
+Lieux;Boulangerie;Boucherie;Pharmacie;Librairie;Épicerie;
+Lieux;Montagne;Colline;Falaise;Volcan;Canyon;
 Métiers;Pompier;Policier;Gendarme;Militaire;Douanier;
 Métiers;Médecin;Infirmier;Pharmacien;Dentiste;Kiné;
+Métiers;Boulanger;Pâtissier;Boucher;Poissonnier;Cuisinier;
+Métiers;Avocat;Juge;Notaire;Huissier;Greffier;
+Métiers;Plombier;Électricien;Maçon;Menuisier;Charpentier;
+Sports;Tennis;Ping-pong;Badminton;Squash;Padel;
+Musique;Guitare;Violon;Ukulélé;Banjo;Harpe;
+Transports;Vélo;Trottinette;Skate;Roller;Moto;
 Objets;Parapluie;Parasol;Chapeau;Casquette;Capuche;
