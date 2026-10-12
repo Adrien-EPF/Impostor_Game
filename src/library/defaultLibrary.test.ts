@@ -27,7 +27,7 @@ describe("DEFAULT_LIB", () => {
     expect(DEFAULT_LIB).toEqual(parseCSV(csvText).groups);
   });
 
-  it("offers at least 70 groups, a floor rather than an exact count", () => {
+  it(`offers at least ${MIN_GROUPS} groups, a floor rather than an exact count`, () => {
     expect(DEFAULT_LIB.length).toBeGreaterThanOrEqual(MIN_GROUPS);
   });
 
