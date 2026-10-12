@@ -4,6 +4,8 @@ import { DEFAULT_LIB } from "./defaultLibrary";
 import { normalizeWord } from "./normalize";
 import { MAX_WORD_COLUMNS, MIN_WORDS_PER_GROUP, parseCSV } from "./parseCsv";
 
+const MIN_GROUPS = 70;
+
 /** Non-empty word cells of each data row, straight from the file (before parseCSV merges duplicates). */
 function rawWordRows(): string[][] {
   return csvText
@@ -22,8 +24,11 @@ function rawWordRows(): string[][] {
 
 describe("DEFAULT_LIB", () => {
   it("is built from mots_imposteur.csv, the single source of the default library", () => {
-    expect(DEFAULT_LIB.length).toBeGreaterThan(0);
     expect(DEFAULT_LIB).toEqual(parseCSV(csvText).groups);
+  });
+
+  it("offers at least 70 groups, a floor rather than an exact count", () => {
+    expect(DEFAULT_LIB.length).toBeGreaterThanOrEqual(MIN_GROUPS);
   });
 
   it("imports every row of the CSV without ignoring any", () => {
