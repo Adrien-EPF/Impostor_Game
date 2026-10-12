@@ -7,7 +7,7 @@ import { MAX_WORD_COLUMNS, MIN_WORDS_PER_GROUP, parseCSV } from "./parseCsv";
 /** Non-empty word cells of each data row, straight from the file (before parseCSV merges duplicates). */
 function rawWordRows(): string[][] {
   return csvText
-    .replace(/^﻿/, "")
+    .replace(/^\uFEFF/, "")
     .split(/\r?\n/)
     .slice(1)
     .filter((line) => line.trim())
